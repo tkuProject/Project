@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 80px 0;
+  width: 600px;
+}
+
+.arrow {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  background-color: white;
+  border: none;
+}
+
+.leftArrow {
+  left: 0;
+}
+
+.rightArrow {
+  right: 0;
+}
