@@ -25,15 +25,17 @@
             transition: .2s;
             width: 100px;
             height: 40px;
+            color: white;
             border: 1px solid gray;
             border-bottom: 0;
             border-radius: 20px 20px 0 0;
-            background-color: lightgray;
+            background-color: #81D9EC;
         }
 
         .tagSelected {
             width: 130px;
             height: 60px;
+            color: gray;
             background-color: white;
         }
 

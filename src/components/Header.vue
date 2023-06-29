@@ -21,7 +21,7 @@
         position: fixed;
         z-index: 2;
         height: 80px;
-        background-color: lightgray;
+        background-color: #81D9EC;
 
         .logo {
             position: absolute;
@@ -92,20 +92,23 @@
 
         .allCardsIcon {
             background-image: url('../assets/images/卡片總覽.svg');
+            color: white;
         }
 
         .rankingsIcon {
             background-image: url('../assets/images/分類榜.svg');
+            color: white;
         }
 
         .notificationIcon {
             background-image: url('../assets/images/小鈴鐺.svg');
+            color: white;
         }
 
         .profilePic {
             width: 40px;
             height: 40px;
-            border: 1px solid black;
+            border: 1px solid gray;
             border-radius: 50%;
             background: white url('../assets/images/預設頭像.svg') no-repeat center 8px;
             background-size: 60%;

@@ -3,6 +3,10 @@
   padding: 0;
 }
 
+body {
+  background-color: #FFF7CE;
+}
+
 li {
   list-style: none;
 }
