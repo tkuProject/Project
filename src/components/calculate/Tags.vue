@@ -6,22 +6,22 @@
 
 <template>
 
-    <ul class="CRTags">
+    <ul class="tags">
         <li v-for="(item, index) in types">
-            <button @click="selectedTag = index" class="calculateResultTag" :class="{ tagSelected: selectedTag == index }">{{ item }}</button>
+            <button @click="selectedTag = index" class="tag" :class="{ tagSelected: selectedTag == index }">{{ item }}</button>
         </li>
     </ul>
 
 </template>
 
 <style scoped>
-    .CRTags {
+    .tags {
 
         display: flex;
         align-items: flex-end;
         height: 60px;
         
-        .calculateResultTag {
+        .tag {
             transition: .2s;
             width: 100px;
             height: 40px;
