@@ -1,6 +1,6 @@
 <script setup>
 
-    const props = defineProps(["types", "selectedTag"]);
+    const props = defineProps(['types', 'selectedTag']);
 
 </script>
 
