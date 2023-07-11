@@ -3,7 +3,7 @@
     import { ref } from 'vue';
 
     const headerSprites = [
-        {text: '卡片總覽', path: '#'},
+        {text: '卡片總覽', path: '/cards'},
         {text: '分類排行', path: '#'},
         {text: '通知', path: '#'}
     ];
@@ -23,22 +23,18 @@
 
 <template>
     <div class="header">
-        <a href="/" class="logo">CCC</a>
-        <div class="search">
-            <input type="search" name="" id="">
-            <button type="button"></button>
-        </div>
+        <router-link to="/" class="logo">CCC</router-link>
         <ul>
             <li v-for="(item, index) in headerSprites">
-                <a :href="item.path" class="aIcon" :style="{ backgroundPositionX: 11.3-index*41.8 + 'px' }">
+                <router-link :to="item.path" class="aIcon" :style="{ backgroundPositionX: 11.3-index*41.8 + 'px' }">
                     {{ item.text }}
-                </a>
+                </router-link>
             </li>
             <!-- 去學pinia，然後來判斷使用者登入了沒 -->
             <li @mouseenter="avatarHovering=true" @mouseleave="avatarHovering=false" class="liForProfile">
-                <a href="#" class="profilePic"></a>
+                <router-link to="#" class="profilePic"></router-link>
                 <ul v-show="avatarHovering" class="profileList">
-                    <li class="myCollection">我的收藏</li>
+                    <li class="myCollection"><router-link to="/cards">我的收藏</router-link></li>
                     <li @click="settingMode=true" class="settingSwitch">設定</li>
                     <hr>
                     <li class="logout">登出</li>
@@ -75,7 +71,7 @@
                 </template>
             </li>
             <li class="notificationSetting">
-                <a href="#">通知設定 &gt;</a>
+                <router-link to="/cards">通知設定 &gt;</router-link>
             </li>
         </ul>
     </div>
@@ -106,36 +102,10 @@
             text-align: center;
             text-decoration: none;
             line-height: 80px;
-        }
-
-        .search {
-            position: relative;
-            overflow: hidden;
-            width: 400px;
-            height: 40px;
-            background-color: white;
-            border: none;
-            border-radius: 12px;
-
-            input {
-                position: absolute;
-                padding-left: 14px;
-                width: 90%;
-                height: 100%;
-                border: none;
-                outline: none;
+            transition: .2s;
+            &:hover {
+                text-shadow: 0 0 6px white;
             }
-
-            button {
-                position: absolute;
-                right: 0;
-                width: 10%;
-                height: 100%;
-                background: url('../assets/images/放大鏡.svg') no-repeat center;
-                background-size: 40%;
-                border: none;
-            }
-
         }
 
         ul {
@@ -190,6 +160,13 @@
                 border: 1px solid gray;
                 border-radius: 12px;
                 background-color: white;
+                a {
+                    color: black;
+                    text-decoration: none;
+                    &:hover {
+                        color: #009DBF;
+                    }
+                }
                 li {
                     margin: 4px 0;
                     padding: 8px 0;
