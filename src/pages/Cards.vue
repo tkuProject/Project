@@ -53,7 +53,7 @@
     <span>您收藏的卡片：</span>
     <ul>
         <li v-for="card in collectionCards">
-            <CardPreview :src="card.src" :name="card.name" :id="card.cardId">
+            <CardPreview :card="card">
                 <template #header>
                     <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
                     </button>
@@ -69,7 +69,7 @@
     <span>其他卡片：</span>
     <ul>
         <li v-for="card in otherCards">
-            <CardPreview :src="card.src" :name="card.name" :id="card.cardId">
+            <CardPreview :card="card">
                 <template #header>
                     <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
                     </button>
@@ -120,9 +120,9 @@
     ul {
         display: flex;
         flex-wrap: wrap;
+        margin-top: 20px;
         li {
-            margin: 0 15px;
-            margin-top: 30px;
+            margin: 20px 15px 0 15px;
             width: 20%;
             button {
                 margin-bottom: 16px;

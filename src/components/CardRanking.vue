@@ -1,5 +1,6 @@
 <script setup>
 
+    import CardPreview from './CardPreview.vue';
     const props = defineProps(['cards']);
 
 </script>
@@ -15,7 +16,7 @@
         </thead>
         <tr v-for="card in cards">
             <td class="tdRanking">{{ card.ranking }}</td>
-            <td class="tdCard"><img :src="card.cardSrc" alt=""></td>
+            <td class="tdCard"><CardPreview :card="card"></CardPreview></td>
             <td class="tdDesc">{{ card.desc }}</td>
         </tr>
     </table>
@@ -31,27 +32,24 @@
         border: 1px solid gray;
         border-collapse: collapse;
 
-    th, td {
-        font-weight: normal;
-        border: 1px solid gray;
-    }
-
-    .tdRanking {
-        width: 20%;
-    }
-
-    .tdCard {
-        padding: 20px 0;
-        width: 30%;
-        img {
-            width: 80%;
+        th, td {
+            font-weight: normal;
+            border: 1px solid gray;
         }
+    
+        .tdRanking {
+            width: 20%;
+        }
+    
+        .tdCard {
+            padding: 20px 20px;
+            width: 30%;
+        }
+    
+        .tdDesc {
+            padding: 20px;
+            width: 50%;
+        }
+    
     }
-
-    .tdDesc {
-        padding: 20px;
-        width: 50%;
-    }
-
-}
 </style>

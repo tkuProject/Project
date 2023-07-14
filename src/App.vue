@@ -7,7 +7,7 @@
   <div class="container">
     <router-view></router-view>
   </div>
-  <a href="#" class="toTop"><span>回頂端</span></a>
+  <a class="toTop"><span>回頂端</span></a>
 </template>
 
 <style lang="less">

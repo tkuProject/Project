@@ -1,16 +1,18 @@
 <script setup>
 
     import { ref } from 'vue';
+    import PopUpBox from './PopUpBox.vue';
 
     const headerSprites = [
+        {text: '試算優惠', path: '/'},
         {text: '卡片總覽', path: '/cards'},
-        {text: '分類排行', path: '#'},
+        {text: '分類排行', path: '/ranking'},
         {text: '通知', path: '#'}
     ];
 
     const avatarHovering = ref(false);
     
-    const settingMode = ref(false);
+    const settingMode = ref({ on: false });
 
     // 之後要改成真的使用者暱稱和信箱
     const userNickname = '賽納爾';
@@ -26,7 +28,7 @@
         <router-link to="/" class="logo">CCC</router-link>
         <ul>
             <li v-for="(item, index) in headerSprites">
-                <router-link :to="item.path" class="aIcon" :style="{ backgroundPositionX: 11.3-index*41.8 + 'px' }">
+                <router-link :to="item.path" class="aIcon" :style="{ backgroundPositionX: 16-index*42 + 'px' }">
                     {{ item.text }}
                 </router-link>
             </li>
@@ -35,7 +37,7 @@
                 <router-link to="#" class="profilePic"></router-link>
                 <ul v-show="avatarHovering" class="profileList">
                     <li class="myCollection"><router-link to="/cards">我的收藏</router-link></li>
-                    <li @click="settingMode=true" class="settingSwitch">設定</li>
+                    <li @click="settingMode.on=true" class="settingSwitch">設定</li>
                     <hr>
                     <li class="logout">登出</li>
                 </ul>
@@ -43,38 +45,38 @@
         </ul>
     </div>
 
-    <div v-if="settingMode" @click="settingMode=false" class="setting">
-        <div class="settingMask"></div>
-        <ul @click.stop class="settingList">
-            <button @click="settingMode=false" class="cloSetting">╳</button>
-            <hr>
-            <li class="nickname">
-                暱稱：
-                <template v-if="editingNickname">
-                    <input type="text">
-                    <button @click="editingNickname=false" class="cancelBtn">取消</button>
-                    <button @click="editingNickname=false">確認</button>
-                </template>
-                <template v-else><span class="userInfo">{{ userNickname }}</span>
-                    <button @click="editingNickname=true" class="editBtn">編輯</button>
-                </template>
-            </li>
-            <li class="email">
-                信箱：
-                <template v-if="editingEmail">
-                    <input type="text">
-                    <button @click="editingEmail=false" class="cancelBtn">取消</button>
-                    <button @click="editingEmail=false">確認</button>
-                </template>
-                <template v-else><span class="userInfo">{{ userEmail }}</span>
-                    <button @click="editingEmail=true" class="editBtn">編輯</button>
-                </template>
-            </li>
-            <li class="notificationSetting">
-                <router-link to="/cards">通知設定 &gt;</router-link>
-            </li>
-        </ul>
-    </div>
+    <PopUpBox :show="settingMode">
+        <template #tab>設定</template>
+        <template #content>
+            <ul class="settingUl">
+                <li class="nickname">
+                    暱稱：
+                    <template v-if="editingNickname">
+                        <input type="text">
+                        <button @click="editingNickname=false" class="cancelBtn">取消</button>
+                        <button @click="editingNickname=false">確認</button>
+                    </template>
+                    <template v-else><span class="userInfo">{{ userNickname }}</span>
+                        <button @click="editingNickname=true" class="editBtn">編輯</button>
+                    </template>
+                </li>
+                <li class="email">
+                    信箱：
+                    <template v-if="editingEmail">
+                        <input type="text">
+                        <button @click="editingEmail=false" class="cancelBtn">取消</button>
+                        <button @click="editingEmail=false">確認</button>
+                    </template>
+                    <template v-else><span class="userInfo">{{ userEmail }}</span>
+                        <button @click="editingEmail=true" class="editBtn">編輯</button>
+                    </template>
+                </li>
+                <li class="notificationSetting">
+                    <router-link to="/cards" @click="settingMode.on=false">通知設定 &gt;</router-link>
+                </li>
+            </ul>
+        </template>
+    </PopUpBox>        
 
 </template>
 
@@ -112,6 +114,7 @@
             display: flex;
             align-items: center;
             justify-content: space-evenly;
+            margin-right: 16px;
             width: 300px;
             li {
                 display: flex;
@@ -183,7 +186,7 @@
                 .myCollection {
                     background-position-y: 12px;
                 }
-                .settings {
+                .settingSwitch {
                     background-position-y: -19px;
                 }
                 .logout {
@@ -199,87 +202,50 @@
 
     }
 
-    .setting {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: fixed;
-        z-index: 3;
-        .settingMask {
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, .5);
-        }
-        .settingList {
-            overflow: hidden;
-            position: absolute;
-            padding-bottom: 10px;
-            width: 380px;
-            border: 1px solid #009DBF;
-            border-radius: 12px;
-            background-color: white;
-            .cloSetting {
-                position: relative;
-                top: 0;
-                right: -86%;
-                width: 40px;
-                height: 40px;
+
+    .settingUl {
+        width: 380px;
+        li {
+            display: flex;
+            align-items: center;
+            position: relative;
+            height: 60px;
+            text-indent: 70px;
+            background: url('../assets/images/settingSprites.svg') no-repeat 16px;
+            background-size: 10%;
+            .userInfo {
+                text-indent: 0;
+            }
+            button {
+                position: absolute;
+                right: 16px;
                 color: gray;
-                font-weight: 700;
                 border: none;
                 background: none;
                 &:hover {
                     color: #009DBF;
                 }
             }
-            hr {
-                margin: auto;
-                width: 90%;
-                border: 1px solid lightgray;
+            .cancelBtn {
+                right: 50px;
             }
-            li {
-                display: flex;
-                align-items: center;
-                position: relative;
-                height: 60px;
-                text-indent: 70px;
-                background: url('../assets/images/settingSprites.svg') no-repeat 16px;
-                background-size: 10%;
-                .userInfo {
-                    text-indent: 0;
-                }
-                button {
-                    position: absolute;
-                    right: 16px;
-                    color: gray;
-                    border: none;
-                    background: none;
-                    &:hover {
-                        color: #009DBF;
-                    }
-                }
-                .cancelBtn {
-                    right: 50px;
-                }
-                a {
-                    color: gray;
-                    text-decoration: none;
-                    &:hover {
-                        color: #009DBF;
-                    }
+            a {
+                color: gray;
+                text-decoration: none;
+                &:hover {
+                    color: #009DBF;
                 }
             }
-            
-            .nickname {
-                background-position-y: 12px;
-            }
-            .email {
-                background-position-y: -38px;
-            }
-            .notificationSetting {
-                background-position-y: -88px;
-            }
+        }
 
+        .nickname {
+            background-position-y: 12px;
+        }
+        .email {
+            background-position-y: -38px;
+        }
+        .notificationSetting {
+            background-position-y: -88px;
         }
     }
     
