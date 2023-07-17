@@ -7,7 +7,7 @@
         {text: '試算優惠', path: '/'},
         {text: '卡片總覽', path: '/cards'},
         {text: '分類排行', path: '/ranking'},
-        {text: '通知', path: '#'}
+        {text: '通知', path: '/notification'}
     ];
 
     const avatarHovering = ref(false);
@@ -87,6 +87,7 @@
         align-items: center;
         justify-content: space-between;
         position: fixed;
+        top: 0;
         z-index: 2;
         box-sizing: border-box;
         padding: 0 20px;

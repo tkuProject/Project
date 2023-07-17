@@ -109,7 +109,6 @@
 
     .platform {
         position: relative;
-        padding-top: 50px;
 
         span {
             color: gray;

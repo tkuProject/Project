@@ -16,7 +16,9 @@ button {
 }
 
 .container {
-  margin: 0 auto;
+  position: relative;
+  margin: 50px auto;
+  margin-bottom: 0;
   padding: 80px 0;
   width: 600px;
 }
@@ -36,4 +38,21 @@ button {
 
 .rightArrow {
   right: 0;
+}
+
+.scrollBox {
+  overflow-y: auto;
+}
+.scrollBox::-webkit-scrollbar {
+  width: 10px;
+  background-color: rgba(211, 211, 211, .5);
+  border-radius: 5px;
+}
+.scrollBox::-webkit-scrollbar-thumb {
+  background-color: #81D9EC;
+  border: 1px solid #009DBF;
+  border-radius: 5px;
+}
+.scrollBox::-webkit-scrollbar-thumb:active {
+  background-color: #009DBF;
 }

@@ -88,6 +88,7 @@
         position: relative;
         overflow: hidden;
         margin: 40px auto;
+        margin-top: 0;
         width: 400px;
         height: 40px;
         background-color: white;

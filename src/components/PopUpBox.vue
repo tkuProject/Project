@@ -10,7 +10,7 @@
 
         <div @click="props.show.on=false" class="mask"></div>
 
-        <div class="ContentBox">
+        <div class="windowBox">
 
             <div class="tabBox">
                 <slot name="tab"></slot>
@@ -42,8 +42,7 @@
             height: 100vh;
             background-color: rgba(0, 0, 0, .5);
         }
-        .ContentBox {
-            overflow-y: auto;
+        .windowBox {
             max-height: 500px;
             position: absolute;
             padding-bottom: 10px;

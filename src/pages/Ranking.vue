@@ -2,6 +2,7 @@
 
     import { ref } from 'vue';
     import CardPreview from '../components/CardPreview.vue';
+    import CardDetail from '../components/CardDetail.vue';
 
     const rankingType = ref('請選擇排行榜類型');
     const typeOpts = ['這種類型', '那種類型', '還有這種類型'];
@@ -32,16 +33,17 @@
 
     <ul class="rankingGraph">
         <li v-for="i in 4">
+            <img v-if="i==1" src="../assets/images/小王冠.png" alt="" class="crown">
             <CardPreview :card="cards[i-1]"></CardPreview>
             <div class="chartBar" :style="{ height: cards[i-1].score / (maxScore/200) + 'px', backgroundColor: barColor[i-1] }"></div>
         </li>
-        <img src="../assets/images/小王冠.png" alt="" class="crown">
     </ul>
 
     <div class="ranking">
         <ul>
-            <li v-for="num in ranNum">
-                第{{ num }}名　覆蓋一張卡
+            <li v-for="(card, index) in cards">
+                <CardPreview :card="card" :name-prefix="'第' + ranNum[index] + '名　'" :only-name="true">
+                </CardPreview>
             </li>
         </ul>
     </div>
@@ -53,6 +55,7 @@
     select {
         display: block;
         margin: 50px auto;
+        margin-top: 0;
         width: 300px;
         height: 40px;
         text-align: center;
@@ -66,31 +69,31 @@
         flex-direction: row;
         align-items: flex-end;
         justify-content: space-evenly;
-        position: relative;
-        padding-top: 30px;
+        padding-top: 40px;
         width: 100%;
-        height: 320px;
         background-color: white;
         box-shadow: 0 8px 8px rgba(0, 0, 0, .2);
         li {
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
             width: 18%;
             .chartBar {
                 width: 60px;
                 border-radius: 12px 12px 0 0;
             }
+            .crown {
+                position: absolute;
+                top: -24px;
+                left: -16px;
+                width: 40px;
+                height: 30px;
+                transform: rotate(-25deg);
+                filter: drop-shadow(0 8px 4px rgba(0, 0, 0, .5))
+            }
         }
-        .crown {
-            position: absolute;
-            top: 16px;
-            left: 18px;
-            width: 40px;
-            height: 30px;
-            transform: rotate(-25deg);
-            filter: drop-shadow(0 8px 4px rgba(0, 0, 0, .5))
-        }
+        
     }
 
     .ranking {
@@ -106,15 +109,6 @@
         border-radius: 12px;
         ul {
             text-align: left;
-            li {
-                margin: 10px 0;
-                font-size: 18px;
-                color: gray;
-                cursor: pointer;
-                &:hover {
-                    color: #009DBF;
-                }
-            }
         }
     }
 
