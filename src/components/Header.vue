@@ -11,6 +11,10 @@
     ];
 
     const avatarHovering = ref(false);
+
+    const logining = ref({ on: true });
+    const account = ref('');
+    const password = ref('');
     
     const settingMode = ref({ on: false });
 
@@ -44,6 +48,23 @@
             </li>
         </ul>
     </div>
+
+    <PopUpBox :show="logining">
+        <template #tab>登入</template>
+        <template #content>
+            <div class="loginInfo">
+                <label>
+                    帳號：
+                    <input type="text" v-model="account">
+                </label>
+                <label>
+                    密碼：
+                    <input type="password" v-model="password">
+                </label>
+                <button @click="console.log(account + '\n' + password)" type="button">確認</button>
+            </div>
+        </template>
+    </PopUpBox>
 
     <PopUpBox :show="settingMode">
         <template #tab>設定</template>
@@ -201,6 +222,28 @@
             }
         }
 
+    }
+
+    .loginInfo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+        label {
+            margin-bottom: 30px;
+        }
+        button {
+            margin-top: 10px;
+            width: 60px;
+            height: 40px;
+            color: white;
+            background-color: #81D9EC;
+            border: 1px solid #009DBF;
+            border-radius: 12px;
+            &:hover {
+                background-color: #009DBF;
+            }
+        }
     }
 
 
