@@ -1,6 +1,7 @@
 <script setup>
 
     import { ref } from 'vue';
+    import { useUserStore } from '../store/userStore';
     import PopUpBox from './PopUpBox.vue';
 
     const headerSprites = [
@@ -12,18 +13,33 @@
 
     const avatarHovering = ref(false);
 
-    const logining = ref({ on: true });
-    const account = ref('');
-    const password = ref('');
+    const userStore = useUserStore();
+    const { mNo, userName, email } = userStore;
     
-    const settingMode = ref({ on: false });
+    // 登入
+    const logining = ref({ on: false });
+    const loginMNo = ref('');
+    const loginPassword = ref('');
 
-    // 之後要改成真的使用者暱稱和信箱
-    const userNickname = '賽納爾';
-    const userEmail = 'cardventure@gmail.com';
+    const confirmPassword = (inputMNo, inputPassword) => {
+        // 發請求給後端確認會員編號和密碼能不能對上
+    };
 
+    // 註冊
+    const registerMode = ref({ on: false });
+    const registerName = ref('');
+    const registerPassword = ref('');
+    const registerEmail = ref('');
+
+    const register = (registerName, registerPassword, registerEmail) => {
+        // 發請求給後端確認這密碼能不能行
+    };
+
+    // 設定
     const editingNickname = ref(false);
     const editingEmail = ref(false);
+
+    const settingMode = ref({ on: false });
 
 </script>
 
@@ -36,32 +52,65 @@
                     {{ item.text }}
                 </router-link>
             </li>
-            <!-- 去學pinia，然後來判斷使用者登入了沒 -->
-            <li @mouseenter="avatarHovering=true" @mouseleave="avatarHovering=false" class="liForProfile">
-                <router-link to="#" class="profilePic"></router-link>
-                <ul v-show="avatarHovering" class="profileList">
+            
+            <li v-if="mNo" @mouseenter="avatarHovering=true" @mouseleave="avatarHovering=false" class="liForProfile">
+                <button class="profilePic roundBtn"></button>
+                <ul v-if="avatarHovering" class="profileList">
                     <li class="myCollection"><router-link to="/cards">我的收藏</router-link></li>
                     <li @click="settingMode.on=true" class="settingSwitch">設定</li>
                     <hr>
                     <li class="logout">登出</li>
                 </ul>
             </li>
+            <li v-else>
+                <button @click="logining.on=true" class="loginBtn roundBtn">登入</button>
+            </li>
+
         </ul>
     </div>
 
     <PopUpBox :show="logining">
         <template #tab>登入</template>
         <template #content>
-            <div class="loginInfo">
+            <div class="inputInfo">
+
                 <label>
-                    帳號：
-                    <input type="text" v-model="account">
+                    會員編號：<br>
+                    <input type="text" v-model="loginMNo">
                 </label>
                 <label>
-                    密碼：
-                    <input type="password" v-model="password">
+                    密碼：<br>
+                    <input type="password" v-model="loginPassword">
                 </label>
-                <button @click="console.log(account + '\n' + password)" type="button">確認</button>
+                <button @click="confirmPassword(loginMNo, loginPassword)" type="button">確認</button>
+
+                <hr>
+                <span>還不是會員？</span>
+                <button @click="registerMode.on=true; logining.on=false" type="button">點此註冊</button>
+
+            </div>
+        </template>
+    </PopUpBox>
+
+    <PopUpBox :show="registerMode">
+        <template #tab>註冊</template>
+        <template #content>
+            <div class="inputInfo">
+                <label>
+                    暱稱：<br>
+                    <input type="text" v-model="registerName" placeholder="請輸入您的暱稱">
+                </label>
+                <label>
+                    密碼：<br>
+                    <input type="password" v-model="registerPassword" placeholder="請設定您的密碼">
+                </label>
+                <label>
+                    信箱：<br>
+                    <input type="text" v-model="registerEmail" placeholder="請填入您的信箱">
+                </label>
+                <button @click="register(registerName, registerPassword, registerEmail)" type="button">
+                    確認
+                </button>
             </div>
         </template>
     </PopUpBox>
@@ -77,7 +126,7 @@
                         <button @click="editingNickname=false" class="cancelBtn">取消</button>
                         <button @click="editingNickname=false">確認</button>
                     </template>
-                    <template v-else><span class="userInfo">{{ userNickname }}</span>
+                    <template v-else><span class="userInfo">{{ userName }}</span>
                         <button @click="editingNickname=true" class="editBtn">編輯</button>
                     </template>
                 </li>
@@ -88,7 +137,7 @@
                         <button @click="editingEmail=false" class="cancelBtn">取消</button>
                         <button @click="editingEmail=false">確認</button>
                     </template>
-                    <template v-else><span class="userInfo">{{ userEmail }}</span>
+                    <template v-else><span class="userInfo">{{ email }}</span>
                         <button @click="editingEmail=true" class="editBtn">編輯</button>
                     </template>
                 </li>
@@ -115,6 +164,7 @@
         width: 100vw;
         height: 80px;
         background-color: #81D9EC;
+        
 
         .logo {
             width: 160px;
@@ -126,7 +176,6 @@
             text-align: center;
             text-decoration: none;
             line-height: 80px;
-            transition: .2s;
             &:hover {
                 text-shadow: 0 0 6px white;
             }
@@ -162,16 +211,28 @@
             }
         }
 
-        .liForProfile {
+        li {
             position: relative;
             padding: 10px 0;
-            .profilePic {
+            .roundBtn {
                 width: 50px;
                 height: 50px;
                 border: 1px solid gray;
                 border-radius: 50%;
+            }
+            .profilePic {
                 background: white url('../assets/images/預設頭像.svg') no-repeat center 8px;
                 background-size: 60%;
+            }
+            .loginBtn {
+                font-size: 16px;
+                color: gray;
+                background-color: white;
+                transition: .2s;
+                &:hover {
+                    color: white;
+                    background-color: #009DBF;
+                }
             }
             .profileList {
                 overflow: hidden;
@@ -179,7 +240,7 @@
                 flex-direction: column;
                 position: absolute;
                 top: 70px;
-                right: -14px;
+                right: -20px;
                 padding: 4px 0;
                 width: 140px;
                 border: 1px solid gray;
@@ -224,17 +285,21 @@
 
     }
 
-    .loginInfo {
+    .inputInfo {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 40px;
+        margin-top: 10px;
         label {
-            margin-bottom: 30px;
+            margin: 10px 40px;
+            input {
+                margin-top: 10px;
+                text-indent: 2px;
+            }
         }
         button {
-            margin-top: 10px;
-            width: 60px;
+            margin: 20px;
+            padding: 0 10px;
             height: 40px;
             color: white;
             background-color: #81D9EC;
@@ -243,6 +308,12 @@
             &:hover {
                 background-color: #009DBF;
             }
+        }
+        hr {
+            margin: auto;
+            margin-bottom: 20px;
+            width: 90%;
+            border: 1px solid lightgray;
         }
     }
 

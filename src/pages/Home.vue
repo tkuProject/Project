@@ -93,7 +93,7 @@
 
         <label class="onlyMyCard">
             <input v-model="onlyMyCard" type="checkbox">
-            只顯示我已擁有的卡片
+            只顯示我已收藏的卡片
         </label>
 
         <button type="button">開始試算</button>
