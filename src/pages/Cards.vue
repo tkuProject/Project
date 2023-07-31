@@ -1,9 +1,12 @@
 <script setup>
 
     import { reactive } from 'vue';
+    import { useUserStore } from '../store/userStore';
     import CardPreview from '../components/CardPreview.vue';
     import infoOnImg from '../assets/images/小鈴鐺.svg';
     import infoOffImg from '../assets/images/小鈴鐺關閉.svg';
+
+    const userStore = useUserStore();
 
     const collectionCards = reactive([]);
     const otherCards = reactive([]);
@@ -50,27 +53,28 @@
         <button type="button"></button>
     </div>
 
-    <span>您收藏的卡片：</span>
-    <ul>
-        <li v-for="card in collectionCards">
-            <CardPreview :card="card">
-                <template #header>
-                    <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
-                    </button>
-                    <button @click="delFromCollection(card.cardId)" class="addAndDel delFromCollection" title="從您的收藏中刪除">×</button>
-                </template>
-            </CardPreview>
-        </li>
-        <div v-if="collectionCards.length==0" class="noCard">您目前沒有收藏卡片喔～</div>
-    </ul>
+    <template v-if="userStore.account">
+        <span>您收藏的卡片：</span>
+        <ul>
+            <li v-for="card in collectionCards">
+                <CardPreview :card="card">
+                    <template #header v-if="userStore.account">
+                        <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
+                        </button>
+                        <button @click="delFromCollection(card.cardId)" class="addAndDel delFromCollection" title="從您的收藏中刪除">×</button>
+                    </template>
+                </CardPreview>
+            </li>
+            <div v-if="collectionCards.length==0" class="noCard">您目前沒有收藏卡片喔～</div>
+        </ul>
+        <hr>
+    </template>
 
-    <hr>
-
-    <span>其他卡片：</span>
+    <span>{{ userStore.account?'其他卡片：':'卡片列表' }}</span>
     <ul>
         <li v-for="card in otherCards">
             <CardPreview :card="card">
-                <template #header>
+                <template #header v-if="userStore.account">
                     <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
                     </button>
                     <button @click="addToCollection(card.cardId)" class="addAndDel addToCollection" title="加入您的收藏">+</button>

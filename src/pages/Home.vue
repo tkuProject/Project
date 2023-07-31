@@ -1,8 +1,11 @@
 <script setup>
 
     import { ref } from 'vue';
+    import { useUserStore } from '../store/userStore';
     import Tags from '../components/Tags.vue';
     import CardRanking from '../components/CardRanking.vue';
+
+    const userStore = useUserStore();
 
     // 準備各個購物平台的圖片網址，和一個用來記錄當前選定購物平台的變數
     const platforms = [
@@ -66,38 +69,50 @@
         </ul>
     </div>
 
-    <form class="conditions">
-        <span class="conditionTitle">是否分期</span>
-        <div class="conditionField">
-            <label>
-                <input v-model="installment" type="radio" name="installmentOrNot" :value="true">
-                有分期
-            </label>
-            <span>　</span>
-            <label>
-                <input v-model="installment" type="radio" name="installmentOrNot" :value="false">
-                無分期
-            </label>
-        </div>
+    <ul class="conditions">
+
+        <li>
+            <span class="conditionTitle">是否分期</span>
+            <div class="conditionField">
+                <label>
+                    <input v-model="installment" type="radio" name="installmentOrNot" :value="true">
+                    有分期
+                </label>
+                <span>　</span>
+                <label>
+                    <input v-model="installment" type="radio" name="installmentOrNot" :value="false">
+                    無分期
+                </label>
+            </div>
+        </li>
         
-        <div v-if="installment" class="installmentTimes">
+        <li v-if="installment" class="installmentTimes">
             <span class="conditionTitle">分期期數</span>
             <input v-model="installmentTimes" type="number" class="conditionField" placeholder="請輸入分期期數">
-        </div>
+        </li>
         
-        <span class="conditionTitle">消費總額</span>
-        <input v-model="total" type="number" class="conditionField" placeholder="請輸入本次消費總金額">
-        <br>
-        <span class="conditionTitle">消費日期</span>
-        <input v-model="date" type="date" class="conditionField" placeholder="請選擇購買日期">
+        <li>
+            <span class="conditionTitle">消費總額</span>
+            <input v-model="total" type="number" class="conditionField" placeholder="請輸入本次消費總金額">
+        </li>
+        
+        <li>
+            <span class="conditionTitle">消費日期</span>
+            <input v-model="date" type="date" class="conditionField">
+        </li>
 
-        <label class="onlyMyCard">
-            <input v-model="onlyMyCard" type="checkbox">
-            只顯示我已收藏的卡片
-        </label>
+        <li class="onlyMyCard">
+            <label v-if="userStore.account">
+                <input v-model="onlyMyCard" type="checkbox">
+                只顯示我已收藏的卡片
+            </label>
+        </li>
 
-        <button type="button">開始試算</button>
-    </form>
+        <li class="calStart">
+            <button type="button">開始試算</button>
+        </li>
+
+    </ul>
 
     <Tags :types="calculateResultTags" :selectedTag="selectedTag"></Tags>
     
@@ -144,34 +159,40 @@
     }
 
     .conditions {
-
-        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         margin-bottom: 50px;
 
-        label {
-            color: gray;
-        }
-
-        .conditionTitle {
-            display: inline-block;
-            float: left;
-            width: 29%;
+        li {
+            display: flex;
+            align-items: center;
+            width: 100%;
             height: 40px;
-            text-align: center;
-            line-height: 40px;
-            background-color: rgba(255, 255, 255, .5);
-            border: 1px solid gray;
-        }
 
-        .conditionField {
-            display: inline-block;
-            float: left;
-            width: 70%;
-            height: 40px;
-            text-align: center;
-            line-height: 40px;
-            background-color: rgba(255, 255, 255, .5);
-            border: 1px solid gray;
+            label {
+                color: gray;
+            }
+
+            .conditionTitle {
+                display: inline-block;
+                width: 29%;
+                height: 40px;
+                text-align: center;
+                line-height: 40px;
+                background-color: rgba(255, 255, 255, .5);
+                border: 1px solid gray;
+            }
+
+            .conditionField {
+                display: inline-block;
+                width: 70%;
+                height: 40px;
+                text-align: center;
+                line-height: 40px;
+                background-color: rgba(255, 255, 255, .5);
+                border: 1px solid gray;
+            }
         }
 
         .installmentTimes {
@@ -181,24 +202,28 @@
         }
 
         .onlyMyCard {
-            display: block;
-            float: left;
-            width: 100%;
-            height: 80px;
+            margin: 20px;
             text-align: center;
-            line-height: 80px;
+            label {
+                display: block;
+                margin: auto;
+                height: 40px;
+                line-height: 40px;
+            }
         }
 
-        button {
-            display: block;
-            margin: auto;
-            width: 180px;
-            height: 30px;
-            color: gray;
-            font-size: 16px;
-            border: 1px solid gray;
-            border-radius: 15px;
-            background-color: white;
+        .calStart {
+            button {
+                display: block;
+                margin: auto;
+                width: 180px;
+                height: 100%;
+                color: gray;
+                font-size: 16px;
+                border: 1px solid gray;
+                border-radius: 15px;
+                background-color: white;
+            }
         }
 
     }

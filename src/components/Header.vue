@@ -4,6 +4,8 @@
     import { useUserStore } from '../store/userStore';
     import PopUpBox from './PopUpBox.vue';
 
+    const userStore = useUserStore();
+
     const headerSprites = [
         {text: '試算優惠', path: '/'},
         {text: '卡片總覽', path: '/cards'},
@@ -12,34 +14,48 @@
     ];
 
     const avatarHovering = ref(false);
-
-    const userStore = useUserStore();
-    const { mNo, userName, email } = userStore;
     
     // 登入
     const logining = ref({ on: false });
-    const loginMNo = ref('');
+    const loginAccount = ref('');
     const loginPassword = ref('');
 
-    const confirmPassword = (inputMNo, inputPassword) => {
-        // 發請求給後端確認會員編號和密碼能不能對上
+    const confirmPassword = () => {
+        const successed = true; // 記得改成發請求給後端確認帳號和密碼能不能對上
+        if(successed) {
+            userStore.account = loginAccount.value;
+            localStorage.setItem('account', userStore.account);
+            loginAccount.value = '';
+            loginPassword.value = '';
+            logining.value.on = false;
+        }
     };
 
     // 註冊
     const registerMode = ref({ on: false });
-    const registerName = ref('');
+    const registerAccount = ref('');
     const registerPassword = ref('');
     const registerEmail = ref('');
 
-    const register = (registerName, registerPassword, registerEmail) => {
+    const register = () => {
         // 發請求給後端確認這密碼能不能行
+            registerAccount.value = '';
+            registerPassword.value = '';
+            registerEmail.value = '';
     };
 
     // 設定
-    const editingNickname = ref(false);
+    const editingPassword = ref(false);
     const editingEmail = ref(false);
 
     const settingMode = ref({ on: false });
+
+    const logout = () => {
+        if(confirm('確定要登出嗎？')) {
+            userStore.account = null;
+            localStorage.removeItem('account');
+        }
+    };
 
 </script>
 
@@ -53,13 +69,13 @@
                 </router-link>
             </li>
             
-            <li v-if="mNo" @mouseenter="avatarHovering=true" @mouseleave="avatarHovering=false" class="liForProfile">
+            <li v-if="userStore.account" @mouseenter="avatarHovering=true" @mouseleave="avatarHovering=false" class="liForProfile">
                 <button class="profilePic roundBtn"></button>
                 <ul v-if="avatarHovering" class="profileList">
                     <li class="myCollection"><router-link to="/cards">我的收藏</router-link></li>
                     <li @click="settingMode.on=true" class="settingSwitch">設定</li>
                     <hr>
-                    <li class="logout">登出</li>
+                    <li @click="logout" class="logout">登出</li>
                 </ul>
             </li>
             <li v-else>
@@ -75,14 +91,14 @@
             <div class="inputInfo">
 
                 <label>
-                    會員編號：<br>
-                    <input type="text" v-model="loginMNo">
+                    帳號：<br>
+                    <input type="text" v-model="loginAccount">
                 </label>
                 <label>
                     密碼：<br>
                     <input type="password" v-model="loginPassword">
                 </label>
-                <button @click="confirmPassword(loginMNo, loginPassword)" type="button">確認</button>
+                <button @click="confirmPassword()" type="button">確認</button>
 
                 <hr>
                 <span>還不是會員？</span>
@@ -97,18 +113,18 @@
         <template #content>
             <div class="inputInfo">
                 <label>
-                    暱稱：<br>
-                    <input type="text" v-model="registerName" placeholder="請輸入您的暱稱">
+                    帳號：<br>
+                    <input type="text" v-model="registerAccount" placeholder="請設定您的帳號">
                 </label>
                 <label>
                     密碼：<br>
                     <input type="password" v-model="registerPassword" placeholder="請設定您的密碼">
                 </label>
                 <label>
-                    信箱：<br>
+                    信箱：（非必填）<br>
                     <input type="text" v-model="registerEmail" placeholder="請填入您的信箱">
                 </label>
-                <button @click="register(registerName, registerPassword, registerEmail)" type="button">
+                <button @click="register()" type="button">
                     確認
                 </button>
             </div>
@@ -120,24 +136,24 @@
         <template #content>
             <ul class="settingUl">
                 <li class="nickname">
-                    暱稱：
-                    <template v-if="editingNickname">
+                    密碼
+                    <template v-if="editingPassword">
                         <input type="text">
-                        <button @click="editingNickname=false" class="cancelBtn">取消</button>
-                        <button @click="editingNickname=false">確認</button>
+                        <button @click="editingPassword=false" class="cancelBtn">取消</button>
+                        <button @click="editingPassword=false">確認</button>
                     </template>
                     <template v-else><span class="userInfo">{{ userName }}</span>
-                        <button @click="editingNickname=true" class="editBtn">編輯</button>
+                        <button @click="editingPassword=true" class="editBtn">編輯</button>
                     </template>
                 </li>
                 <li class="email">
-                    信箱：
+                    信箱
                     <template v-if="editingEmail">
                         <input type="text">
                         <button @click="editingEmail=false" class="cancelBtn">取消</button>
                         <button @click="editingEmail=false">確認</button>
                     </template>
-                    <template v-else><span class="userInfo">{{ email }}</span>
+                    <template v-else><span class="userInfo">{{ userStore.email }}</span>
                         <button @click="editingEmail=true" class="editBtn">編輯</button>
                     </template>
                 </li>
@@ -328,6 +344,9 @@
             text-indent: 70px;
             background: url('../assets/images/settingSprites.svg') no-repeat 16px;
             background-size: 10%;
+            input {
+                margin-left: 1em;
+            }
             .userInfo {
                 text-indent: 0;
             }
