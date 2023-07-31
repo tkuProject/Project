@@ -101,8 +101,8 @@
             <input v-model="date" type="date" class="conditionField">
         </li>
 
-        <li class="onlyMyCard">
-            <label v-if="userStore.account">
+        <li class="onlyMyCard" v-if="userStore.account">
+            <label>
                 <input v-model="onlyMyCard" type="checkbox">
                 只顯示我已收藏的卡片
             </label>
@@ -202,7 +202,7 @@
         }
 
         .onlyMyCard {
-            margin: 20px;
+            margin-top: 30px;
             text-align: center;
             label {
                 display: block;
@@ -213,6 +213,7 @@
         }
 
         .calStart {
+            margin-top: 30px;
             button {
                 display: block;
                 margin: auto;
