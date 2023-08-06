@@ -4,6 +4,7 @@
     import { useUserStore } from '../store/userStore';
     import Tags from '../components/Tags.vue';
     import CardRanking from '../components/CardRanking.vue';
+    import sendReq from '../utils/sendReq';
 
     const userStore = useUserStore();
 
@@ -21,8 +22,8 @@
 
     // 記錄使用者在表單輸入的值
     const installment = ref(false);
-    const installmentTimes = ref(null);
-    const total = ref(null);
+    const costPerMonth = ref(null);
+    const totalCost = ref(null);
     const date = ref(null);
     const onlyMyCard = ref(null);
 
@@ -33,25 +34,34 @@
         "購物平台回饋",
         "其他回饋"
     ];
-    const selectedTag = ref(0);
+    const selectedTag = ref('現金折扣');
+
+    // 純emit做法
+    // const changeSelectedTag = (tagName) => {
+    //     selectedTag.value = tagName;
+    // };
+
+    const startCal = () => {
+        console.log(selectedTag.value);
+    };
 
     const rankingCards = [
         {
             ranking: 1,
-            name: '某一張卡',
-            src: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
+            Card_Name: '某一張卡',
+            Img_Site: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
             desc: '我只是個範例，沒有真的算過，誒嘿'
         },
         {
             ranking: 2,
-            name: '某一張卡',
-            src: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
+            Card_Name: '某一張卡',
+            Img_Site: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
             desc: '我只是個範例，沒有真的算過，誒嘿'
         },
         {
             ranking: 3,
-            name: '某一張卡',
-            src: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
+            Card_Name: '某一張卡',
+            Img_Site: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
             desc: '我只是個範例，沒有真的算過，誒嘿'
         }
     ];
@@ -88,12 +98,12 @@
         
         <li v-if="installment" class="installmentTimes">
             <span class="conditionTitle">分期期數</span>
-            <input v-model="installmentTimes" type="number" class="conditionField" placeholder="請輸入分期期數">
+            <input v-model="costPerMonth" type="number" class="conditionField" placeholder="請輸入分期期數">
         </li>
         
         <li>
             <span class="conditionTitle">消費總額</span>
-            <input v-model="total" type="number" class="conditionField" placeholder="請輸入本次消費總金額">
+            <input v-model="totalCost" type="number" class="conditionField" placeholder="請輸入本次消費總金額">
         </li>
         
         <li>
@@ -109,12 +119,15 @@
         </li>
 
         <li class="calStart">
-            <button type="button">開始試算</button>
+            <button @click="startCal" type="button">開始試算</button>
         </li>
 
     </ul>
 
-    <Tags :types="calculateResultTags" :selectedTag="selectedTag"></Tags>
+    <!-- 純emit做法 -->
+    <!-- <Tags :types="calculateResultTags" :selectedTag="selectedTag" @select-tag="changeSelectedTag"></Tags> -->
+    <!-- v-model做法 -->
+    <Tags :types="calculateResultTags" v-model="selectedTag"></Tags>
     
     <CardRanking :cards="rankingCards"></CardRanking>
 

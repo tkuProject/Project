@@ -15,8 +15,8 @@
 
     
     <div class="wrapper" @click="showDetail.on=true">
-        <img v-if="!props.onlyName" :src="props.card.src" alt="" class="previewImg">
-        <span class="cardName">{{ (props.namePrefix??'') + props.card.name }}</span>
+        <img v-if="!props.onlyName" :src="props.card.Img_Site" alt="" class="previewImg">
+        <span class="cardName">{{ (props.namePrefix??'') + props.card.Card_Name }}</span>
     </div>
 
     <CardDetail :card="props.card" :show="showDetail"></CardDetail>

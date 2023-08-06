@@ -23,8 +23,8 @@
 
         <template #content>
         
-            <img :src="props.card.src" alt="" class="detailCard">
-            <div class="cardName">{{ props.card.name }}</div>
+            <img :src="props.card.Img_Site" alt="" class="detailCard">
+            <div class="cardName">{{ props.card.Card_Name }}</div>
             <ul class="infoUl scrollBox">
                 <li v-for="item in cardInfo">
                     <div class="infoTitle">

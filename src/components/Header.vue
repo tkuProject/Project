@@ -3,14 +3,14 @@
     import { ref } from 'vue';
     import { useUserStore } from '../store/userStore';
     import PopUpBox from './PopUpBox.vue';
+    import sendReq from '../utils/sendReq';
 
     const userStore = useUserStore();
 
     const headerSprites = [
         {text: '試算優惠', path: '/'},
         {text: '卡片總覽', path: '/cards'},
-        {text: '分類排行', path: '/ranking'},
-        {text: '通知', path: '/notification'}
+        {text: '分類排行', path: '/ranking'}
     ];
 
     const avatarHovering = ref(false);
@@ -20,15 +20,29 @@
     const loginAccount = ref('');
     const loginPassword = ref('');
 
-    const confirmPassword = () => {
-        const successed = true; // 記得改成發請求給後端確認帳號和密碼能不能對上
-        if(successed) {
-            userStore.account = loginAccount.value;
-            localStorage.setItem('account', userStore.account);
-            loginAccount.value = '';
-            loginPassword.value = '';
-            logining.value.on = false;
+    const confirmPassword = async () => {
+
+        const { status, loginSucc, collectionCards } = await sendReq(
+            'login',
+            {
+                body: {
+                    account: loginAccount,
+                    password: loginPassword
+                }
+            },
+            'post'
+        );
+
+        if(status == 200) {
+            if(loginSucc) {
+                userStore.account = loginAccount.value;
+                localStorage.setItem('account', userStore.account);
+                loginAccount.value = '';
+                loginPassword.value = '';
+                logining.value.on = false;
+            }
         }
+
     };
 
     // 註冊
@@ -37,11 +51,32 @@
     const registerPassword = ref('');
     const registerEmail = ref('');
 
-    const register = () => {
-        // 發請求給後端確認這密碼能不能行
-            registerAccount.value = '';
-            registerPassword.value = '';
-            registerEmail.value = '';
+    const register = async () => {
+        registerAccount.value = '';
+        registerPassword.value = '';
+        registerEmail.value = '';
+        const data = {
+            account: registerAccount.value,
+            password: registerPassword.value
+        };
+        if(registerEmail.value) {
+            data.email = registerEmail;
+        }
+
+        const { status, qualified } = await sendReq('regist', { body: data }, 'post');
+
+        if(status == 200) {
+            if(qualified) {
+                alert('註冊成功！');
+                registerAccount.value = '';
+                registerPassword.value = '';
+                registerEmail.value = '';
+                registerMode.value.on = false;
+            }
+            else {
+                alert('註冊失敗，請檢查輸入的資料是否符合要求');
+            }
+        }
     };
 
     // 設定
@@ -72,7 +107,8 @@
             <li v-if="userStore.account" @mouseenter="avatarHovering=true" @mouseleave="avatarHovering=false" class="liForProfile">
                 <button class="profilePic roundBtn"></button>
                 <ul v-if="avatarHovering" class="profileList">
-                    <li class="myCollection"><router-link to="/cards">我的收藏</router-link></li>
+                    <li class="myCollection"><router-link to="/cards">收藏</router-link></li>
+                    <li class="myNotification"><router-link to="/notification">通知</router-link></li>
                     <li @click="settingMode.on=true" class="settingSwitch">設定</li>
                     <hr>
                     <li @click="logout" class="logout">登出</li>
@@ -181,7 +217,6 @@
         height: 80px;
         background-color: #81D9EC;
         
-
         .logo {
             width: 160px;
             height: 100%;
@@ -201,8 +236,8 @@
             display: flex;
             align-items: center;
             justify-content: space-evenly;
-            margin-right: 16px;
-            width: 300px;
+            margin-right: 20px;
+            width: 260px;
             li {
                 display: flex;
                 flex-direction: column;
@@ -256,7 +291,7 @@
                 flex-direction: column;
                 position: absolute;
                 top: 70px;
-                right: -20px;
+                right: -30px;
                 padding: 4px 0;
                 width: 140px;
                 border: 1px solid gray;
@@ -273,8 +308,8 @@
                     margin: 4px 0;
                     padding: 8px 0;
                     width: 100%;
-                    text-indent: 50px;
-                    background: url('../assets/images/profileSprites.svg') no-repeat 16px;
+                    text-indent: 66px;
+                    background: url('../assets/images/profileSprites.svg') no-repeat 26px;
                     background-size: 20%;
                     cursor: pointer;
                     &:hover {
@@ -285,11 +320,14 @@
                 .myCollection {
                     background-position-y: 12px;
                 }
-                .settingSwitch {
+                .myNotification {
                     background-position-y: -19px;
                 }
-                .logout {
+                .settingSwitch {
                     background-position-y: -50px;
+                }
+                .logout {
+                    background-position-y: -81px;
                 }
                 hr {
                     margin: 4px 0;

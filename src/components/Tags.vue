@@ -1,14 +1,23 @@
 <script setup>
 
-    const props = defineProps(['types', 'selectedTag']);
+    // 純emit
+    // const props = defineProps(['types', 'selectedTag']);
+    // const emit = defineEmits(['selectTag']);
+
+    // v-model
+    const props = defineProps(['types', 'modelValue']);
+    const emit = defineEmits(['update:modelValue']);
 
 </script>
 
 <template>
 
     <ul class="tags">
-        <li v-for="(item, index) in types">
-            <button @click="selectedTag = index" class="tag" :class="{ tagSelected: selectedTag == index }">{{ item }}</button>
+        <li v-for="item in types">
+            <!-- 純emit -->
+            <!-- <button @click="emit('selectTag', item)" class="tag" :class="{ tagSelected: selectedTag == item }">{{ item }}</button> -->
+            <!-- v-model -->
+            <button @click="emit('update:modelValue', item)" class="tag" :class="{ tagSelected: modelValue == item }">{{ item }}</button>
         </li>
     </ul>
 

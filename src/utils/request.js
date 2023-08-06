@@ -1,3 +1,5 @@
+// 給Test.vue測試用的文件
+
 export default (path, options = {}) => {
     if(options.body) {
         options.body = JSON.stringify(options.body);

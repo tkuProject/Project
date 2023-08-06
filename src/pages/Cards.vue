@@ -1,35 +1,15 @@
 <script setup>
 
     import { reactive } from 'vue';
+    import { useCardStore } from '../store/CardStore';
     import { useUserStore } from '../store/userStore';
     import CardPreview from '../components/CardPreview.vue';
     import infoOnImg from '../assets/images/小鈴鐺.svg';
     import infoOffImg from '../assets/images/小鈴鐺關閉.svg';
 
+    const cardStore = useCardStore();
     const userStore = useUserStore();
-
-    const collectionCards = reactive([]);
-    const otherCards = reactive([]);
-
-    // ↓塞點假的卡片，示意用，記得刪
-    const numOfMyCard = 6;
-    for(let i=0; i<numOfMyCard; i++) {
-        collectionCards.push({
-            cardId: i,
-            src: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
-            name: '哇卡卡卡卡',
-            infoOn: false
-        });
-    }
-    for(let i=0; i<15; i++) {
-        otherCards.push({
-            cardId: i + numOfMyCard,
-            src: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
-            name: '哇卡卡卡卡',
-            infoOn: false
-        });
-    }
-
+    
     // 能連上資料庫之後記得大改這兩個
     const delFromCollection = (id) => {
         const cardIndex = collectionCards.indexOf(collectionCards.find(item => item.cardId==id));
@@ -55,8 +35,8 @@
 
     <template v-if="userStore.account">
         <span>您收藏的卡片：</span>
-        <ul>
-            <li v-for="card in collectionCards">
+        <ul v-if="cardStore.collectionCards?.length >= 0">
+            <li v-for="card in cardStore.collectionCards">
                 <CardPreview :card="card">
                     <template #header v-if="userStore.account">
                         <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
@@ -65,14 +45,15 @@
                     </template>
                 </CardPreview>
             </li>
-            <div v-if="collectionCards.length==0" class="noCard">您目前沒有收藏卡片喔～</div>
+            <div v-if="cardStore.collectionCards.length==0" class="noCard">您目前沒有收藏卡片喔～</div>
         </ul>
+        <div v-else>讀取中</div>
         <hr>
     </template>
 
     <span>{{ userStore.account?'其他卡片：':'卡片列表' }}</span>
-    <ul>
-        <li v-for="card in otherCards">
+    <ul v-if="(userStore.account?cardStore.otherCards:cardStore.allCards)?.length >= 0">
+        <li v-for="card in userStore.account?cardStore.otherCards:cardStore.allCards">
             <CardPreview :card="card">
                 <template #header v-if="userStore.account">
                     <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
@@ -81,8 +62,9 @@
                 </template>
             </CardPreview>
         </li>
-        <div v-if="otherCards.length==0" class="noCard">目前沒有其他卡片喔～</div>
+        <div v-if="(userStore.account?cardStore.otherCards:cardStore.allCards).length==0" class="noCard">目前沒有其他卡片喔～</div>
     </ul>
+    <div v-else>讀取中</div>
 
 </template>
 
