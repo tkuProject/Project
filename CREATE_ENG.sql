@@ -91,7 +91,7 @@ Category_Name varchar(10) not null,
 PRIMARY KEY (Category_No)
 );
 
-CREATE TABLE Ramking(
+CREATE TABLE Ranking(
 Card_No int not null ,
 Category_No int not null,
 Ranks int null,
@@ -117,7 +117,7 @@ FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on update cascade,
 FOREIGN KEY (kNo, Category_No) REFERENCES Keyword(kNo, Category_No) on update cascade
 );
 
-CREATE TABLE Notification(
+CREATE TABLE `Notification`(
 nNo int not null AUTO_INCREMENT,
 nContent varchar(150) not null,
 nLink varchar(50) not null,
