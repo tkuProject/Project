@@ -30,7 +30,8 @@ uNo int not null AUTO_INCREMENT,
 Single_consumption_threshold int null,
 single_installments_threshold int null,
 cumulative_installments_threshold int null ,
-specific_duration_consumption varchar(20) null,
+specific_duration_start date null,
+specific_duration_end date null,
 bank_name varchar(7) null,
 Card_No int null,
 PRIMARY KEY (uNo),
@@ -67,7 +68,7 @@ FOREIGN KEY (dNo) REFERENCES discount_description(dNo) on update cascade,
 FOREIGN KEY (pNo) REFERENCES Points(pNo) on update cascade
 );
 
-CREATE TABLE member(
+CREATE TABLE `member`(
 mAccount varchar(24) not null,
 mPassword varchar(64) not null,
 email varchar(30) null,
