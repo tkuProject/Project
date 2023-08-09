@@ -8,15 +8,16 @@
   const cardStore = useCardStore();
   const userStore = useUserStore();
   
-  onBeforeMount(() => {
+  onBeforeMount(async () => {
     // 確認是否已有登入
     const account = localStorage.getItem('account');
     if(account) {
       userStore.account = account;
-      userStore.collectionCards = collectionCards;
     }
     // 請求所有卡片
-    cardStore.getCards();
+    await cardStore.getCards();
+    // 把收藏拿過來
+    await userStore.getCollectionCards();
   });
 
 </script>

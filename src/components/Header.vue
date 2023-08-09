@@ -22,7 +22,7 @@
 
     const confirmPassword = async () => {
 
-        const { status, loginSucc, collectionCards } = await sendReq(
+        const { status, loginSucc } = await sendReq(
             'login',
             {
                 body: {
@@ -37,6 +37,7 @@
             if(loginSucc) {
                 userStore.account = loginAccount.value;
                 localStorage.setItem('account', userStore.account);
+                userStore.getCollectionCards();
                 loginAccount.value = '';
                 loginPassword.value = '';
                 logining.value.on = false;

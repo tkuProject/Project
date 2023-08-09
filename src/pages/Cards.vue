@@ -1,27 +1,66 @@
 <script setup>
 
-    import { reactive } from 'vue';
+    import { computed } from 'vue';
     import { useCardStore } from '../store/CardStore';
     import { useUserStore } from '../store/userStore';
+    import sendReq from '../utils/sendReq';
     import CardPreview from '../components/CardPreview.vue';
     import infoOnImg from '../assets/images/小鈴鐺.svg';
     import infoOffImg from '../assets/images/小鈴鐺關閉.svg';
 
     const cardStore = useCardStore();
     const userStore = useUserStore();
-    
-    // 能連上資料庫之後記得大改這兩個
-    const delFromCollection = (id) => {
-        const cardIndex = collectionCards.indexOf(collectionCards.find(item => item.cardId==id));
-        if(cardIndex != -1) {
-            otherCards.push(collectionCards.splice(cardIndex, 1)[0]);
+
+    cardStore.collectionCards = computed(() => {
+        return cardStore.allCards.filter(item => {
+            if(userStore.collectionCards) {
+                return userStore.collectionCards.includes(item.Card_No);
+            }
+        });
+    });
+
+    cardStore.otherCards = computed(() => {
+        return cardStore.allCards.filter(item => {
+            if(userStore.collectionCards) {
+                return !(userStore.collectionCards.includes(item.Card_No));
+            }
+        });
+    });
+
+    const delFromCollection = async (cardNo) => {
+        const { status } = await sendReq('delCollection',
+        {
+            header: { account: userStore.account },
+            params: [cardNo]
+        },
+        'delete');
+        if(status == 200) {
+            alert('刪除成功！');
+        } else {
+            // 這個記得改
+            alert('刪除失敗');
         }
+        // 刷新userStore的collectionCards
+        userStore.getCollectionCards;
+        
+        // 刪完得刷新才能看到，得修
+
     };
-    const addToCollection = (id) => {
-        const cardIndex = otherCards.indexOf(otherCards.find(item => item.cardId==id));
-        if(cardIndex != -1) {
-            collectionCards.push(otherCards.splice(cardIndex, 1)[0]);
+    const addToCollection = async (cardNo) => {
+        const { status } = await sendReq('appendCollection',
+        {
+            header: { account: userStore.account },
+            body: { Card_No: cardNo }
+        },
+        'post');
+        if(status == 200) {
+            alert('添加成功！');
+        } else {
+            // 這個記得改
+            alert('添加失敗');
         }
+        // 刷新userStore的collectionCards
+        userStore.getCollectionCards();
     };
 
 </script>
@@ -41,7 +80,7 @@
                     <template #header v-if="userStore.account">
                         <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
                         </button>
-                        <button @click="delFromCollection(card.cardId)" class="addAndDel delFromCollection" title="從您的收藏中刪除">×</button>
+                        <button @click="delFromCollection(card.Card_No)" class="addAndDel delFromCollection" title="從您的收藏中刪除">×</button>
                     </template>
                 </CardPreview>
             </li>
@@ -58,7 +97,7 @@
                 <template #header v-if="userStore.account">
                     <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
                     </button>
-                    <button @click="addToCollection(card.cardId)" class="addAndDel addToCollection" title="加入您的收藏">+</button>
+                    <button @click="addToCollection(card.Card_No)" class="addAndDel addToCollection" title="加入您的收藏">+</button>
                 </template>
             </CardPreview>
         </li>
