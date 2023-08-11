@@ -53,12 +53,6 @@ FOREIGN KEY (pNo) REFERENCES Points(pNo) on update cascade,
 FOREIGN KEY (uNo) REFERENCES Condition_of_Use(uNo) on update cascade
 );
 
-CREATE TABLE Other(
-dNo int not null ,
-other_discount varchar(100),
-PRIMARY KEY (dNo),
-FOREIGN KEY (dNo) REFERENCES discount_description(dNo) on update cascade
-);
 
 CREATE TABLE `include`(
 dNo int not null,
@@ -103,19 +97,16 @@ FOREIGN KEY (Category_No) REFERENCES Charts(Category_No) on update cascade
 
 CREATE TABLE Keyword(
 kNo int not null AUTO_INCREMENT,
-Category_No int not null,
 kName varchar(10),
-Category_Name varchar(10) not null, 
 PRIMARY KEY(kNo, Category_No)
 );
 
 CREATE TABLE conform(
 kNo int not null ,
-Category_No int not null ,
 Card_No int not null ,
-PRIMARY KEY(kNo, Category_No, Card_No),
+PRIMARY KEY(kNo, Card_No),
 FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on update cascade,
-FOREIGN KEY (kNo, Category_No) REFERENCES Keyword(kNo, Category_No) on update cascade
+FOREIGN KEY (kNo) REFERENCES Keyword(kNo) on update cascade
 );
 
 CREATE TABLE `Notification`(
