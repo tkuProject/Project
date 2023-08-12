@@ -66,7 +66,6 @@ CREATE TABLE `member`(
 mAccount varchar(24) not null,
 mPassword varchar(64) not null,
 email varchar(30) null,
-collect_information varchar(100) null,
 PRIMARY KEY (mAccount)
 );
 
