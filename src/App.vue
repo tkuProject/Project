@@ -25,7 +25,9 @@
 <template>
   <Header></Header>
   <div class="container">
-    <router-view></router-view>
+    <Suspense>
+      <router-view></router-view>
+    </Suspense>
     <ToTop></ToTop>
   </div>
 </template>

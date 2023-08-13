@@ -8,7 +8,7 @@
     const userStore = useUserStore();
 
     const headerSprites = [
-        {text: '試算優惠', path: '/'},
+        {text: '優惠比較', path: '/'},
         {text: '卡片總覽', path: '/cards'},
         {text: '分類排行', path: '/ranking'}
     ];

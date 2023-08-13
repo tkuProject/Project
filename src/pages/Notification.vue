@@ -112,14 +112,6 @@
                     }
                     button {
                         width: 80px;
-                        color: gray;
-                        background-color: white;
-                        border: 1px solid gray;
-                        border-radius: 12px;
-                        &:hover {
-                            color: white;
-                            background-color: #009DBF;
-                        }
                     }
                 }
             }
@@ -138,14 +130,6 @@
             width: 100%;
             height: 60px;
             font-size: 18px;
-            background-color: white;
-            border: 1px solid gray;
-            border-radius: 12px;
-            cursor: pointer;
-            &:hover {
-                color: #009DBF;
-                border-color: #009DBF;
-            }
         }
         .activated {
             color: #009DBF;

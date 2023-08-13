@@ -11,13 +11,16 @@ export const useCardStore = defineStore('card', {
 
     actions: {
 
+        findCard(cardNo) {
+            return this.allCards.find(item => item.Card_No == cardNo);
+        },
+
         async getCards() {
-            const cards = await sendReq().then(json => {
+            this.allCards = await sendReq().then(json => {
                 if(json.status == 200) {
                     return json.allCards;
                 }
             });
-            this.allCards = cards;
         }
 
     }

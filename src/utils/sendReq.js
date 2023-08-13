@@ -28,6 +28,14 @@ export default (path = '', options = {}, method = 'get') => {
         headers: options.headers,
         body: options.body,
         method
-    }).then(res => res.json());
+    }).then(res => {
+        return res.json();
+        /*if(res.status == 200) {
+            return res.json();
+        } else {
+            // 之後再討論真的遇到其他情況要怎麼做
+            console.log(path + '請求失敗');
+        }*/
+    });
 
 }

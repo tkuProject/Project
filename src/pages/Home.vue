@@ -1,6 +1,6 @@
 <script setup>
 
-    import { ref } from 'vue';
+    import { reactive, ref, watch } from 'vue';
     import { useUserStore } from '../store/userStore';
     import Tags from '../components/Tags.vue';
     import CardRanking from '../components/CardRanking.vue';
@@ -8,73 +8,76 @@
 
     const userStore = useUserStore();
 
-    // 準備各個購物平台的圖片網址，和一個用來記錄當前選定購物平台的變數
-    const platforms = [
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAJ1BMVEXkAIDkAIDjAHriAHXkAID////86fHtea72vNX63urzqMn4zN7nM414wKpEAAAAAnRSTlO8A6fqfTYAAADPSURBVDiNtZPJEgMhCEQNIODy/98bUcelKs7kkPShpxjfAVpxL0c3ci93e16Ih/NC/AaAqa0agEwh5Vl0AJKfElyKBBVAXv5FA0KV94wXkIjYK1EDBKviCmAxRexA7Q42AAyArwG0GVGPwNAG+AsIy0htTOr5dcM91wrg1FZ1ACRMZYj2YTaXU5I+SOStSU7lPqpVwOYsQZ6TRAsK0zGH9lJAjkCGfA8EYmuCD0la955VbZgGQNQIxQRAi4kO5StJy3QYfHi0f16cx+V9Wv83hYQSPdtBzuYAAAAASUVORK5CYII=",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAJ1BMVEXkAIDkAIDjAHriAHXkAID////86fHtea72vNX63urzqMn4zN7nM414wKpEAAAAAnRSTlO8A6fqfTYAAADPSURBVDiNtZPJEgMhCEQNIODy/98bUcelKs7kkPShpxjfAVpxL0c3ci93e16Ih/NC/AaAqa0agEwh5Vl0AJKfElyKBBVAXv5FA0KV94wXkIjYK1EDBKviCmAxRexA7Q42AAyArwG0GVGPwNAG+AsIy0htTOr5dcM91wrg1FZ1ACRMZYj2YTaXU5I+SOStSU7lPqpVwOYsQZ6TRAsK0zGH9lJAjkCGfA8EYmuCD0la955VbZgGQNQIxQRAi4kO5StJy3QYfHi0f16cx+V9Wv83hYQSPdtBzuYAAAAASUVORK5CYII=",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAJ1BMVEXkAIDkAIDjAHriAHXkAID////86fHtea72vNX63urzqMn4zN7nM414wKpEAAAAAnRSTlO8A6fqfTYAAADPSURBVDiNtZPJEgMhCEQNIODy/98bUcelKs7kkPShpxjfAVpxL0c3ci93e16Ih/NC/AaAqa0agEwh5Vl0AJKfElyKBBVAXv5FA0KV94wXkIjYK1EDBKviCmAxRexA7Q42AAyArwG0GVGPwNAG+AsIy0htTOr5dcM91wrg1FZ1ACRMZYj2YTaXU5I+SOStSU7lPqpVwOYsQZ6TRAsK0zGH9lJAjkCGfA8EYmuCD0la955VbZgGQNQIxQRAi4kO5StJy3QYfHi0f16cx+V9Wv83hYQSPdtBzuYAAAAASUVORK5CYII=",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAJ1BMVEXkAIDkAIDjAHriAHXkAID////86fHtea72vNX63urzqMn4zN7nM414wKpEAAAAAnRSTlO8A6fqfTYAAADPSURBVDiNtZPJEgMhCEQNIODy/98bUcelKs7kkPShpxjfAVpxL0c3ci93e16Ih/NC/AaAqa0agEwh5Vl0AJKfElyKBBVAXv5FA0KV94wXkIjYK1EDBKviCmAxRexA7Q42AAyArwG0GVGPwNAG+AsIy0htTOr5dcM91wrg1FZ1ACRMZYj2YTaXU5I+SOStSU7lPqpVwOYsQZ6TRAsK0zGH9lJAjkCGfA8EYmuCD0la955VbZgGQNQIxQRAi4kO5StJy3QYfHi0f16cx+V9Wv83hYQSPdtBzuYAAAAASUVORK5CYII=",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAJ1BMVEXkAIDkAIDjAHriAHXkAID////86fHtea72vNX63urzqMn4zN7nM414wKpEAAAAAnRSTlO8A6fqfTYAAADPSURBVDiNtZPJEgMhCEQNIODy/98bUcelKs7kkPShpxjfAVpxL0c3ci93e16Ih/NC/AaAqa0agEwh5Vl0AJKfElyKBBVAXv5FA0KV94wXkIjYK1EDBKviCmAxRexA7Q42AAyArwG0GVGPwNAG+AsIy0htTOr5dcM91wrg1FZ1ACRMZYj2YTaXU5I+SOStSU7lPqpVwOYsQZ6TRAsK0zGH9lJAjkCGfA8EYmuCD0la955VbZgGQNQIxQRAi4kO5StJy3QYfHi0f16cx+V9Wv83hYQSPdtBzuYAAAAASUVORK5CYII=",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAJ1BMVEXkAIDkAIDjAHriAHXkAID////86fHtea72vNX63urzqMn4zN7nM414wKpEAAAAAnRSTlO8A6fqfTYAAADPSURBVDiNtZPJEgMhCEQNIODy/98bUcelKs7kkPShpxjfAVpxL0c3ci93e16Ih/NC/AaAqa0agEwh5Vl0AJKfElyKBBVAXv5FA0KV94wXkIjYK1EDBKviCmAxRexA7Q42AAyArwG0GVGPwNAG+AsIy0htTOr5dcM91wrg1FZ1ACRMZYj2YTaXU5I+SOStSU7lPqpVwOYsQZ6TRAsK0zGH9lJAjkCGfA8EYmuCD0la955VbZgGQNQIxQRAi4kO5StJy3QYfHi0f16cx+V9Wv83hYQSPdtBzuYAAAAASUVORK5CYII=",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAJ1BMVEXkAIDkAIDjAHriAHXkAID////86fHtea72vNX63urzqMn4zN7nM414wKpEAAAAAnRSTlO8A6fqfTYAAADPSURBVDiNtZPJEgMhCEQNIODy/98bUcelKs7kkPShpxjfAVpxL0c3ci93e16Ih/NC/AaAqa0agEwh5Vl0AJKfElyKBBVAXv5FA0KV94wXkIjYK1EDBKviCmAxRexA7Q42AAyArwG0GVGPwNAG+AsIy0htTOr5dcM91wrg1FZ1ACRMZYj2YTaXU5I+SOStSU7lPqpVwOYsQZ6TRAsK0zGH9lJAjkCGfA8EYmuCD0la955VbZgGQNQIxQRAi4kO5StJy3QYfHi0f16cx+V9Wv83hYQSPdtBzuYAAAAASUVORK5CYII="
-    ];
-    const selectedPlatform = ref(0);
+    // 準備各個購物平台，和一個用來記錄當前選定購物平台的變數
+    const platforms = reactive(await sendReq('getPlatform').then(json => {
+        if(json.status == 200) {
+            return json.platforms;
+        }
+    }));
+    const selectedPlatforms = reactive([platforms[0].sNo]);
+    // 點選購物平台
+    const clickPlatform = sNo => {
+        if(selectedPlatforms.includes(sNo)) {
+            if(selectedPlatforms.length > 1) {
+                selectedPlatforms.splice(selectedPlatforms.indexOf(sNo), 1);
+            } else {
+                alert('至少要選擇一個網站喔～');
+            }
+        } else {
+            selectedPlatforms.push(sNo);
+        }
+    };
+    const selectAllPlatforms = () => {
+        for(let item of platforms) {
+            if(!selectedPlatforms.includes(item.sNo)) {
+                selectedPlatforms.push(item.sNo);
+            }
+        }
+    };
 
     // 記錄使用者在表單輸入的值
     const installment = ref(false);
-    const costPerMonth = ref(null);
+    const installmentMonths = ref(null);
     const totalCost = ref(null);
     const date = ref(null);
-    const onlyMyCard = ref(null);
+    const onlyMyCard = ref(false);
+
+    const rankingSrc = reactive([]);
+    const startCompare = async () => {
+        rankingSrc.length = 0;
+        rankingSrc.push(...await sendReq('compFilter', {
+            query: {
+                platforms: selectedPlatforms,
+                installment: installment.value,
+                costPerMonth: totalCost.value/installmentMonths.value,
+                totalCost: totalCost.value,
+                date: date.value
+            }
+        }).then(json => {
+            if(json.status == 200) {
+                return json.results;
+            }
+        }));
+    };
 
     // 準備試算標籤列表，和一個用來記錄當前選定標籤的變數
     const calculateResultTags = [
         "現金折扣",
         "刷卡金回饋",
-        "購物平台回饋",
-        "其他回饋"
+        "購物平台回饋"
     ];
     const selectedTag = ref('現金折扣');
-
-    // 純emit做法
-    // const changeSelectedTag = (tagName) => {
-    //     selectedTag.value = tagName;
-    // };
-
-    const startCal = () => {
-        console.log(selectedTag.value);
-    };
-
-    const rankingCards = [
-        {
-            ranking: 1,
-            Card_Name: '某一張卡',
-            Img_Site: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
-            desc: '我只是個範例，沒有真的算過，誒嘿'
-        },
-        {
-            ranking: 2,
-            Card_Name: '某一張卡',
-            Img_Site: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
-            desc: '我只是個範例，沒有真的算過，誒嘿'
-        },
-        {
-            ranking: 3,
-            Card_Name: '某一張卡',
-            Img_Site: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
-            desc: '我只是個範例，沒有真的算過，誒嘿'
-        }
-    ];
 
 </script>
 
 <template>
 
-    <div class="platform">
-        <span>請選擇欲消費之網站：</span>
+    <div class="platformBox">
+        <span>請選擇欲比較之網站：</span>
+        <button @click="selectAllPlatforms">選擇全部網站</button>
         <ul>
-            <li v-for="(img, index) in platforms">
-                <img @click="selectedPlatform = index" :src="img" alt="" :class="{ platformSelected: selectedPlatform == index }">
+            <li v-for="item in platforms">
+                <img @click="clickPlatform(item.sNo)" :src="item.sImg_Site" alt="" :class="{ platformSelected: selectedPlatforms.includes(item.sNo) }">
             </li>
         </ul>
     </div>
@@ -98,12 +101,12 @@
         
         <li v-if="installment" class="installmentTimes">
             <span class="conditionTitle">分期期數</span>
-            <input v-model="costPerMonth" type="number" class="conditionField" placeholder="請輸入分期期數">
+            <input v-model="installmentMonths" type="number" class="conditionField" placeholder="請輸入分期期數">
         </li>
         
         <li>
             <span class="conditionTitle">消費總額</span>
-            <input v-model="totalCost" type="number" class="conditionField" placeholder="請輸入本次消費總金額">
+            <input v-model="totalCost" type="number" class="conditionField" placeholder="請輸入消費總金額">
         </li>
         
         <li>
@@ -111,35 +114,41 @@
             <input v-model="date" type="date" class="conditionField">
         </li>
 
-        <li class="onlyMyCard" v-if="userStore.account">
-            <label>
-                <input v-model="onlyMyCard" type="checkbox">
-                只顯示我已收藏的卡片
-            </label>
-        </li>
-
-        <li class="calStart">
-            <button @click="startCal" type="button">開始試算</button>
+        <li class="compareStart">
+            <button @click="startCompare" type="button">開始比較</button>
         </li>
 
     </ul>
 
-    <!-- 純emit做法 -->
-    <!-- <Tags :types="calculateResultTags" :selectedTag="selectedTag" @select-tag="changeSelectedTag"></Tags> -->
-    <!-- v-model做法 -->
-    <Tags :types="calculateResultTags" v-model="selectedTag"></Tags>
+    <div class="tagWrapper">
+        <Tags :types="calculateResultTags" v-model="selectedTag"></Tags>
+
+        <div class="onlyMyCard" v-if="userStore.account">
+            <label>
+                <input v-model="onlyMyCard" type="checkbox">
+                只顯示我的收藏
+            </label>
+        </div>
+    </div>
     
-    <CardRanking :cards="rankingCards"></CardRanking>
+    <CardRanking :ranking-src="rankingSrc" :tab="selectedTag" :total-cost="totalCost" :collection-filter="onlyMyCard"></CardRanking>
 
 </template>
 
 <style lang="less" scoped>
 
-    .platform {
+    .platformBox {
         position: relative;
 
         span {
             color: gray;
+        }
+
+        button {
+            position: absolute;
+            right: 0;
+            padding: 6px;
+            width: 100px;
         }
 
         ul {
@@ -214,8 +223,24 @@
             }
         }
 
-        .onlyMyCard {
+        .compareStart {
             margin-top: 30px;
+            button {
+                display: block;
+                margin: auto;
+                width: 180px;
+                height: 100%;
+                font-size: 16px;
+            }
+        }
+
+    }
+
+    .tagWrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .onlyMyCard {
             text-align: center;
             label {
                 display: block;
@@ -224,22 +249,6 @@
                 line-height: 40px;
             }
         }
-
-        .calStart {
-            margin-top: 30px;
-            button {
-                display: block;
-                margin: auto;
-                width: 180px;
-                height: 100%;
-                color: gray;
-                font-size: 16px;
-                border: 1px solid gray;
-                border-radius: 15px;
-                background-color: white;
-            }
-        }
-
     }
 
 </style>

@@ -25,6 +25,7 @@
     cursor: pointer;
     &:hover {
       background-image: url('../assets/images/toTopHover.svg');
+      background-color: white;
       border-color: #009DBF;
     }
     span {
