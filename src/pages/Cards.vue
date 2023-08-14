@@ -41,9 +41,7 @@
             alert('刪除失敗');
         }
         // 刷新userStore的collectionCards
-        userStore.getCollectionCards;
-        
-        // 刪完得刷新才能看到，得修
+        userStore.getCollectionCards();
 
     };
     const addToCollection = async (cardNo) => {
@@ -63,6 +61,48 @@
         userStore.getCollectionCards();
     };
 
+    let notiOnCards;
+    const getNotiOnCards = async () => {
+        notiOnCards = await sendReq('notiCards', {
+            headers: {
+                account: userStore.account
+            }
+        }).then(json => {
+            if(json.status == 200) {
+                return json.notiOnCards;
+            }
+        })
+    };
+    getNotiOnCards();
+
+    const turnOnNoti = async cardNo => {
+        await sendReq('notiOn', {
+            headers: { account: userStore.account },
+            body: { Card_No: cardNo }
+        }, 'post').then(json => {
+            if(json.status == 200) {
+                alert('成功開啟通知！');
+            } else {
+                alert('未能成功開啟通知');
+            }
+        });
+        getNotiOnCards();
+    };
+
+    const turnOffNoti = async cardNo => {
+        await sendReq('notiOff', {
+            headers: { account: userStore.account },
+            params: [cardNo]
+        }, 'delete').then(json => {
+            if(json.status == 200) {
+                alert('成功關閉通知！');
+            } else {
+                alert('未能成功關閉通知');
+            }
+        });
+        getNotiOnCards();
+    };
+
 </script>
 
 <template>
@@ -78,7 +118,9 @@
             <li v-for="card in cardStore.collectionCards">
                 <CardPreview :card="card">
                     <template #header v-if="userStore.account">
-                        <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
+                        <button v-if="notiOnCards?.includes(card.Card_No)" @click="turnOffNoti(card.Card_No)" class="informBtn" title="關閉通知" :style="{ backgroundImage: `url('` + (infoOnImg) + `')` }">
+                        </button>
+                        <button v-else @click="turnOnNoti(card.Card_No)" class="informBtn" title="開啟通知" :style="{ backgroundImage: `url('` + (infoOffImg) + `')` }">
                         </button>
                         <button @click="delFromCollection(card.Card_No)" class="addAndDel delFromCollection" title="從您的收藏中刪除">×</button>
                     </template>
@@ -95,7 +137,9 @@
         <li v-for="card in userStore.account?cardStore.otherCards:cardStore.allCards">
             <CardPreview :card="card">
                 <template #header v-if="userStore.account">
-                    <button @click="card.infoOn=!card.infoOn" class="informBtn" :title="(card.infoOn?'關閉':'開啟') + '通知'" :style="{ backgroundImage: `url('` + (card.infoOn?infoOnImg:infoOffImg) + `')` }">
+                    <button v-if="notiOnCards?.includes(card.Card_No)" @click="turnOffNoti(card.Card_No)" class="informBtn" title="關閉通知" :style="{ backgroundImage: `url('` + (infoOnImg) + `')` }">
+                    </button>
+                    <button v-else @click="turnOnNoti(card.Card_No)" class="informBtn" title="開啟通知" :style="{ backgroundImage: `url('` + (infoOffImg) + `')` }">
                     </button>
                     <button @click="addToCollection(card.Card_No)" class="addAndDel addToCollection" title="加入您的收藏">+</button>
                 </template>
