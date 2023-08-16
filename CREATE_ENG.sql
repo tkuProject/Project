@@ -27,7 +27,7 @@ PRIMARY KEY(Card_No)
 
 CREATE TABLE Condition_of_Use(
 uNo int not null AUTO_INCREMENT,
-Single_consumption_threshold int null,
+single_consumption_threshold int null,
 single_installments_threshold int null,
 cumulative_installments_threshold int null ,
 specific_duration_start date null,
