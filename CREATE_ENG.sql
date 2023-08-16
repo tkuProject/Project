@@ -19,7 +19,7 @@ Card_Name varchar(10) not null,
 bank varchar(6) not null,
 link  varchar(50) not null,
 application_link varchar(50) not null,
-discount_information varchar(200) not null,
+discount_information varchar(300) not null,
 fee varchar(100) not null,
 Img_Site varchar(100) not null,
 PRIMARY KEY(Card_No)
@@ -76,7 +76,6 @@ PRIMARY KEY (mAccount)
 CREATE TABLE collect_card(
 Card_No int not null,
 mAccount varchar(24) not null,
-Card_Name varchar(10) not null,
 PRIMARY KEY (Card_No, mAccount),
 FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on update cascade,
 FOREIGN KEY (mAccount) REFERENCES member(mAccount) on update cascade
@@ -113,7 +112,6 @@ FOREIGN KEY (kNo) REFERENCES Keyword(kNo) on update cascade
 
 CREATE TABLE `Notification`(
 nNo int not null AUTO_INCREMENT,
-nContent varchar(150) not null,
 nLink varchar(50) not null,
 nDate DATE not null,
 Card_No int not null,
