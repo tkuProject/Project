@@ -97,7 +97,10 @@
 
 <template>
     <div class="header">
-        <router-link to="/" class="logo">CCC</router-link>
+        <div class="titleWrapper">
+            <router-link to="/" class="logo">CCC</router-link>
+            <span>Credit Card Comparison</span>
+        </div>
         <ul>
             <li v-for="(item, index) in headerSprites">
                 <router-link :to="item.path" class="aIcon" :style="{ backgroundPositionX: 16-index*42 + 'px' }">
@@ -213,23 +216,28 @@
         top: 0;
         z-index: 2;
         box-sizing: border-box;
-        padding: 0 20px;
+        padding: 0 30px;
         width: 100vw;
         height: 80px;
         background-color: #81D9EC;
         
-        .logo {
-            width: 160px;
+        .titleWrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            padding-left: 20px;
             height: 100%;
-            background-image: '';
-            /* 下面這段有logo之後刪掉 */
             color: #009DBF;
-            font-size: 48px;
-            text-align: center;
-            text-decoration: none;
-            line-height: 80px;
+            cursor: pointer;
             &:hover {
                 text-shadow: 0 0 6px white;
+            }
+            .logo {
+                width: 160px;
+                height: 60%;
+                color: #009DBF;
+                font-size: 48px;
+                text-decoration: none;
             }
         }
 

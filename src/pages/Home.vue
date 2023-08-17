@@ -1,6 +1,6 @@
 <script setup>
 
-    import { reactive, ref, watch } from 'vue';
+    import { reactive, ref } from 'vue';
     import { useUserStore } from '../store/userStore';
     import Tags from '../components/Tags.vue';
     import CardRanking from '../components/CardRanking.vue';
@@ -37,27 +37,37 @@
 
     // 記錄使用者在表單輸入的值
     const installment = ref(false);
-    const installmentMonths = ref(null);
+    const installmentOptions = [3, 6, 9, 12, 18, 24, 30];
+    const installmentMonths = ref(installmentOptions[0]);
     const totalCost = ref(null);
-    const date = ref(null);
+    // 以當日作為消費時間的預設值
+    const now = new Date();
+    const month = now.getMonth()+1;
+    const day = now.getDate();
+    const date = ref(`${ now.getFullYear() }-${ month>=10 ? month : ('0'+month) }-${ day>=10 ? day : ('0'+day) }`);
+
     const onlyMyCard = ref(false);
 
     const rankingSrc = reactive([]);
     const startCompare = async () => {
-        rankingSrc.length = 0;
-        rankingSrc.push(...await sendReq('compFilter', {
-            query: {
-                platforms: selectedPlatforms,
-                installment: installment.value,
-                costPerMonth: totalCost.value/installmentMonths.value,
-                totalCost: totalCost.value,
-                date: date.value
-            }
-        }).then(json => {
-            if(json.status == 200) {
-                return json.results;
-            }
-        }));
+        if(!totalCost.value) {
+            alert('要先輸入消費總額才能開始比較喔～');
+        } else {
+            rankingSrc.length = 0;
+            rankingSrc.push(...await sendReq('compFilter', {
+                query: {
+                    platforms: selectedPlatforms,
+                    installment: installment.value,
+                    costPerMonth: totalCost.value/installmentMonths.value,
+                    totalCost: totalCost.value,
+                    date: date.value
+                }
+            }).then(json => {
+                if(json.status == 200) {
+                    return json.results;
+                }
+            }));
+        }
     };
 
     // 準備試算標籤列表，和一個用來記錄當前選定標籤的變數
@@ -101,12 +111,15 @@
         
         <li v-if="installment" class="installmentTimes">
             <span class="conditionTitle">分期期數</span>
-            <input v-model="installmentMonths" type="number" class="conditionField" placeholder="請輸入分期期數">
+            <!-- <input v-model="installmentMonths" type="number" class="conditionField" placeholder="請輸入分期期數"> -->
+            <select class="conditionField" v-model="installmentMonths">
+                <option v-for="item in installmentOptions">{{ item }}</option>
+            </select>
         </li>
         
         <li>
             <span class="conditionTitle">消費總額</span>
-            <input v-model="totalCost" type="number" class="conditionField" placeholder="請輸入消費總金額">
+            <input v-model="totalCost" type="number" min="0" oninput="if(value<0) value=0" class="conditionField" placeholder="請輸入消費總金額">
         </li>
         
         <li>
@@ -131,7 +144,7 @@
         </div>
     </div>
     
-    <CardRanking :ranking-src="rankingSrc" :tab="selectedTag" :total-cost="totalCost" :collection-filter="onlyMyCard"></CardRanking>
+    <CardRanking :ranking-src="rankingSrc" :tab="selectedTag" :platforms="platforms" :total-cost="totalCost" :collection-filter="onlyMyCard"></CardRanking>
 
 </template>
 
