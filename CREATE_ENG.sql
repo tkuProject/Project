@@ -99,7 +99,7 @@ FOREIGN KEY (Category_No) REFERENCES Charts(Category_No) on update cascade
 CREATE TABLE Keyword(
 kNo int not null AUTO_INCREMENT,
 kName varchar(10),
-PRIMARY KEY(kNo, Category_No)
+PRIMARY KEY(kNo)
 );
 
 CREATE TABLE conform(
