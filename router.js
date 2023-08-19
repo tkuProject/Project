@@ -26,7 +26,7 @@ router.get('/', async(req,res) => {   //根目錄, 把所有卡片叫出來備�
     // res.header('Access-Control-Allow-Origin', '*')
     try {
         // 執行查詢
-        const [rows, fields] = await promisePool.query(
+        const [rows] = await promisePool.query(
             "SELECT * FROM Credit_Card"
         );
         console.log(rows);
@@ -40,9 +40,9 @@ router.get('/', async(req,res) => {   //根目錄, 把所有卡片叫出來備�
 router.post('/regist', async(req,res) => {   // 註冊, body, 缺少接收使用者寄來之帳密的參數
     console.log('service is running the regist page!')
     const {account, password, email} = req.body //接果渣丟過來的值
-    console.log(req.body)
+    // console.log(req.body)
     try{
-        const [rows,fields] = await promisePool.query(
+        const [rows] = await promisePool.query(
             "SELECT COUNT(*) AS count FROM member WHERE mAccount = ?",
             [account]
         )
@@ -52,7 +52,7 @@ router.post('/regist', async(req,res) => {   // 註冊, body, 缺少接收使用
             res.send({status:200, qualified: false})// 這裡應該不是200
         } else {
             res.send({status:200, qualified: true})
-            const [rows,fields] = await promisePool.query(
+            const regist = await promisePool.query(
                 `insert into member (mAccount, mPassword, email) values ("${account}","${password}", "${email}")`
             )
         }
@@ -69,35 +69,27 @@ router.post('/regist', async(req,res) => {   // 註冊, body, 缺少接收使用
 
 // 密碼如果能設太長的話，會有惡意代碼的風險(SQL injection)
 router.post('/login', async(req,res) => {   // 登入, body, 用戶收藏的卡片陣列（collectionCards）
-    /*try {
-        // 執行查詢
-        const userPassword = req.body.password;
-        res.send("status: 200");
-
-    } catch (err) {
-        console.error("Error executing query:", err);
-        res.send("status: 500");
-        res.send({ error: "Internal Server Error" });
-    }*/
-    const {mAccount, mPassword} = req.body
+    const {account, password} = req.body
     try{
-        const [rows,fields] = await promisePool.query(
+        const [rows] = await promisePool.query(
             "SELECT COUNT(*) AS count FROM member WHERE mAccount = ?",
-            [mAccount]
+            [account]
         )
         const accountExists = rows[0].count > 0;    //應該是指該參數是否大於0
-        
+        let loginSucc = false
         if(accountExists) {
-            const [passwordRows,passwordfields] = await promisePool.query(
+            const [passwordRows] = await promisePool.query(
                 "SELECT mPassword FROM member WHERE mAccount = ?",
-                [mAccount]
+                [account]
             )
-            if(passwordRows.length>0){
-                const dbPassword = passwordRows[0].mPassword;
+            const psw = passwordRows[0].mPassword
+            if(password === psw){
+                res.send({status:200, loginSucc:true})  //登入成功
+            } else {
+                res.send({status:400, loginSucc:false}) //密碼錯誤
             }
-            
         } else {
-            res.send({status:200, accountExists: false});
+            res.send({status:400, accountExists: false});   //帳號錯誤
         }
     } catch(err){
         console.error("Error executing query:", err);
