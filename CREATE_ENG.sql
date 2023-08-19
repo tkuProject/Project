@@ -34,8 +34,10 @@ specific_duration_start date null,
 specific_duration_end date null,
 bank_name varchar(7) null,
 Card_No int null,
+dNo int not null,
 PRIMARY KEY (uNo),
-FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on delete set null on update cascade
+FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on delete set null on update cascade,
+FOREIGN KEY (dNo) REFERENCES discount_description(dNo)  on update cascade
 );
 
 CREATE TABLE discount_description(
@@ -47,13 +49,10 @@ Card_Reward int null,
 Card_Reward_Percent int null,
 Shopping_Platform_Reward int null,
 Reward_upper_limit int  null, 
-Precautions varchar(1500) null,
 sNo int not null,
-uNo int not null ,
 PRIMARY KEY (dNo),
 FOREIGN KEY (sNo) REFERENCES Shopping_Platform(sNo) on update cascade,
 FOREIGN KEY (pNo) REFERENCES Points(pNo) on update cascade,
-FOREIGN KEY (uNo) REFERENCES Condition_of_Use(uNo) on update cascade
 );
 
 
@@ -134,4 +133,16 @@ Card_No int not null,
 PRIMARY KEY (mAccount, Card_No),
 FOREIGN KEY(mAccount) REFERENCES member(mAccount),
 FOREIGN KEY(Card_No) REFERENCES Credit_Card(Card_No)
+);
+
+CREATE TABLE Precautions(
+dNo int not null,
+Precautions_content varchar(1500) null,
+PRIMARY KEY (dNo, Precautions_content)
+);
+
+CREATE TABLE day_of_the_week(
+uNo int not null,
+the_day date null,
+PRIMARY KEY (uNo, the_day)
 );
