@@ -52,7 +52,7 @@ Reward_upper_limit int  null,
 sNo int not null,
 PRIMARY KEY (dNo),
 FOREIGN KEY (sNo) REFERENCES Shopping_Platform(sNo) on update cascade,
-FOREIGN KEY (pNo) REFERENCES Points(pNo) on update cascade,
+FOREIGN KEY (pNo) REFERENCES Points(pNo) on update cascade
 );
 
 
