@@ -24,7 +24,7 @@ export default (path = '', options = {}, method = 'get') => {
         options.body = JSON.stringify(options.body);
     }
 
-    return fetch('http://127.0.0.1:3001/ccc/' + path, {
+    return fetch('http://127.0.0.1:3000/ccc/' + path, {
         headers: options.headers,
         body: options.body,
         method

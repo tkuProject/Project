@@ -1,29 +1,38 @@
 <script setup>
 
     import { ref, reactive } from 'vue';
+    import { useUserStore } from '../store/userStore';
+    import sendReq from '../utils/sendReq';
 
-    const notiOnCards = [];
-    // 造假卡的，記得刪
-    for(let i=0; i<5; i++) {
-        const card = {
-            name: '某一種卡',
-            src: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp'
-        };
-        notiOnCards.push(card);
-    }
+    const userStore = useUserStore();
+
+    const notiOnCards = reactive([]);
+    const getNotiOnCards = async () => {
+        await sendReq('notiCards', {
+            headers: {
+                account: userStore.account
+            }
+        }).then(json => {
+            if(json.status == 200) {
+                notiOnCards.length = 0;
+                notiOnCards.push(...json.notiOnCards);
+            }
+        })
+    };
+    getNotiOnCards();
 
     const notis = reactive([]);
-    // 造假通知的，記得刪
-    for(let i=0; i<5; i++) {
-        const noti = {
-            cardName: '某一種卡',
-            src: 'https://images.contentstack.io/v3/assets/blt4ca32b8be67c85f8/blt93e64887e1209558/613b200cab64c62537a81256/Fotoram.io_(3).png?width=256&disable=upscale&fit=bounds&auto=webp',
-            desc: '剛剛發佈一則優惠活動資訊，點此前往查看文章',
-            dateTime: '2023-7-15 19:08',
-            notiOn: false
-        };
-        notis.push(noti);
-    }
+    const getNotis = async () => {
+        await sendReq('notiAll', {
+            headers: { account: userStore.account }
+        }).then(json => {
+            if(json.status == 200) {
+                notis.length = 0;
+                notis.push(...json.notifications);
+            }
+        });
+    };
+    getNotis();
 
     const collectionOnlyActivated = ref(false);
     const cardFilterActivated = ref(false);

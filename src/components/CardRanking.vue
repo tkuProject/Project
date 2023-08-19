@@ -40,7 +40,7 @@
                     }
                     if(tabType.includes('_Percent')) {
                         item.info.sortKey = props.totalCost * item.discount_description?.[tabType] / 100;
-                        item.info.calculation = `消費金額${ props.totalCost } × ${ item.discount_description?.[tabType] }%`;
+                        item.info.calculation = `消費金額${ props.totalCost }元 × ${ item.discount_description?.[tabType] }% ↓`;
                     } else {
                         item.info.sortKey = item.discount_description?.[tabType];
                     }
@@ -114,6 +114,7 @@
                             {{ conditions[conditionName] + '：' + item.Condition_of_Use[conditionName] }}
                         </template>
                     </div>
+                    <div>{{ item.info.calculation }}</div>
                     <div class="conclusion">{{ item.info.conclusion }}</div>
                 </div>
             </td>
@@ -152,7 +153,7 @@
                 flex-direction: column;
                 padding: 20px;
                 padding-bottom: 10px;
-                height: 130px;
+                height: 170px;
             }
         }
     
