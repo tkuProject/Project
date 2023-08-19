@@ -35,9 +35,11 @@ specific_duration_end date null,
 bank_name varchar(7) null,
 Card_No int null,
 dNo int not null,
+sNo int not null,
 PRIMARY KEY (uNo),
 FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on delete set null on update cascade,
-FOREIGN KEY (dNo) REFERENCES discount_description(dNo)  on update cascade
+FOREIGN KEY (dNo) REFERENCES discount_description(dNo)  on update cascade,
+FOREIGN KEY (pNo) REFERENCES Points(pNo) on update cascade
 );
 
 CREATE TABLE discount_description(
@@ -49,10 +51,8 @@ Card_Reward int null,
 Card_Reward_Percent int null,
 Shopping_Platform_Reward int null,
 Reward_upper_limit int  null, 
-sNo int not null,
 PRIMARY KEY (dNo),
 FOREIGN KEY (sNo) REFERENCES Shopping_Platform(sNo) on update cascade,
-FOREIGN KEY (pNo) REFERENCES Points(pNo) on update cascade
 );
 
 
