@@ -39,7 +39,7 @@ sNo int not null,
 PRIMARY KEY (uNo),
 FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on delete set null on update cascade,
 FOREIGN KEY (dNo) REFERENCES discount_description(dNo)  on update cascade,
-FOREIGN KEY (pNo) REFERENCES Points(pNo) on update cascade
+FOREIGN KEY (sNo) REFERENCES Points(sNo) on update cascade
 );
 
 CREATE TABLE discount_description(
