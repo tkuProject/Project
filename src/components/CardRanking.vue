@@ -12,7 +12,7 @@
     const tabMap = {
         '現金折扣': ['Cash_Discount', 'Cash_Discount_Percent'],
         '刷卡金回饋': ['Card_Reward', 'Card_Reward_Percent'],
-        // '購物平台回饋': []
+        '購物平台回饋': ['Shopping_Platform_Reward']
     };
 
     const conditions = {
@@ -40,6 +40,9 @@
                     }
                     if(tabType.includes('_Percent')) {
                         item.info.sortKey = props.totalCost * item.discount_description?.[tabType] / 100;
+                        if(item.discount_description?.Reward_upper_limit && item.info.sortKey > item.discount_description?.Reward_upper_limit) {
+                            item.info.sortKey = item.discount_description.Reward_upper_limit;
+                        }
                         item.info.calculation = `消費金額${ props.totalCost }元 × ${ item.discount_description?.[tabType] }% ↓`;
                     } else {
                         item.info.sortKey = item.discount_description?.[tabType];
@@ -113,6 +116,9 @@
                         <template v-if="item.Condition_of_Use?.[conditionName]">
                             {{ conditions[conditionName] + '：' + item.Condition_of_Use[conditionName] }}
                         </template>
+                    </div>
+                    <div v-if="item.discount_description?.Reward_upper_limit">
+                        {{ '回饋上限：' + item.discount_description.Reward_upper_limit }}
                     </div>
                     <div>{{ item.info.calculation }}</div>
                     <div class="conclusion">{{ item.info.conclusion }}</div>
