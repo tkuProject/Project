@@ -37,7 +37,7 @@ Card_No int null,
 dNo int not null,
 sNo int not null,
 PRIMARY KEY (uNo),
-FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on delete set null on update cascade,
+FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No)  on update cascade,
 FOREIGN KEY (dNo) REFERENCES discount_description(dNo)  on update cascade,
 FOREIGN KEY (sNo) REFERENCES Shopping_Platform(sNo) on update cascade
 );
