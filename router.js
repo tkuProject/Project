@@ -51,10 +51,10 @@ router.post('/regist', async(req,res) => {   // 註冊, body, 缺少接收使用
         if(accountExists) {
             res.send({status:200, qualified: false})// 這裡應該不是200
         } else {
-            res.send({status:200, qualified: true})
-            const regist = await promisePool.query(
+            promisePool.query(
                 `insert into member (mAccount, mPassword, email) values ("${account}","${password}", "${email}")`
             )
+            res.send({status:200, qualified: true})
         }
     } catch(err){
         console.error("Error executing query:", err);
@@ -97,138 +97,194 @@ router.post('/login', async(req,res) => {   // 登入, body, 用戶收藏的卡�
     }
 })
 
-router.get('/getCollectionCards', async(req,res) => {
+router.get('/getCollectionCards', async(req,res) => {   //卡片收藏, headers, 要抓卡片編號
     try{
-        //Use a parameterized query to prevent SQL injection
-        const query = "SELECT Card_No FROM Credit_Card WHERE password = ?"//這句好像怪怪的，可能是放錯位置
-        //const collectionCards = await promisePool.query("SELECT Card_No FROM Credit_Card");
-        const [collectionCards, fields] = await promisePool.query(query, [userPassword])
-        
+        const{account} = req.headers
+        const [collectionCards] = await promisePool.query(
+            "SELECT Card_No From collect_card WHERE mAccount = ?",
+            [account]
+        )
         console.log(collectionCards);
-        res.send("status: 200")
-        res.send({ ok: 1, data: collectionCards });
+        res.send({status: 200, collectionCards})
     } catch (err){
-        console.error("Error executing query:", err);
-        res.send("status: 500")
-        res.send({ error: "Internal Server Error"});
+        console.error("Error executing query:", err)
+        res.send({status:500, resData:{ error: "Internal Server Error"}})
     }
 })
 
 router.get('/getPlatform', async(req,res) => {   // 顯示購物平台, query, ＊格式：[ 購物平台（*） ]
     try {
         // 執行查詢
-        const [shoppingPlatform, fields] = await promisePool.query(
+        const [shoppingPlatform] = await promisePool.query(
             "SELECT * FROM Shopping_Platform"
         );
         console.log(shoppingPlatform);
-        res.send("status: 200")
-        res.send({ ok: 1, data: shoppingPlatform });
+        res.send({status: 200, shoppingPlatform })
     } catch (err) {
-        console.error("Error executing query:", err);
-        res.send("status: 500")
-        res.send({ error: "Internal Server Error" });
+        console.error("Error executing query:", err)
+        res.send({status:500, resData:{ error: "Internal Server Error"}})
     }
 })
 
 router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{優惠方案（object）, 卡片編號},　… ]
     try {
         // 執行查詢
-        const [cardInfo, fields] = await promisePool.query(
+        const {platformNos, installment, costPerMonth, totalCost, startDate, endDate} = req.query
+        const [cardInfo] = await promisePool.query(
+            /*
+            if(installment === true){
+                `SELECT single_installments_threshold,
+                    cumulative_installments_threshold,
+                    specific_duration_start,
+                    specific_duration_end
+                FROM Condition_of_Use
+                WHERE`
+            } elif(installment === false) {
+
+            }
+            */
             "SELECT Card_No, discount_information FROM Credit_Card"
         );
-        console.log(cardInfo);
-        res.send("status: 200")
-        res.send({ ok: 1, data: cardInfo });
+        res.send({status: 200});
     } catch (err) {
-        console.error("Error executing query:", err);
-        res.send("status: 500")
-        res.send({ error: "Internal Server Error" });
+        console.error("Error executing query:", err)
+        res.send({status:500, resData:{ error: "Internal Server Error"}})
     }
     
 })
 
-router.post('/notiOn',(req,res) => {   // 開啟推播, body, forntend: 會員帳號（account）：字串 ＊放headers
-    res.send("status: 200")
+router.post('/notiOn', async(req,res) => {   // 開啟推播, body, forntend: 會員帳號（account）：字串 ＊放headers
+    const {account, Card_No} = req.body
+    try{
+        await promisePool.query(
+            `INSERT INTO opening_notification (mAccount, Card_No) VALUES("${account}", "${Card_No}")`
+        )
+        res.send({status: 200})
+    }catch (err) {
+        console.error("Error executing query:", err)
+        res.send({status:500, resData:{ error: "Internal Server Error"}}) 
+    }
+
 })
-router.delete('/notiOff',(req,res) => {   // 關閉推播, params
-    res.send("status: 200")
+router.delete('/notiOff', async(req,res) => {   // 關閉推播, params
+    const {account, Card_No} = req.params
+    try{
+        await promisePool.query(
+            `DELETE FROM opening_notification WHERE mAccount = "${account}" AND Card_No = "${Card_No}"`
+        )
+        res.send({status: 200})
+    }catch (err) {
+        console.error("Error executing query:", err)
+        res.send({status:500, resData:{ error: "Internal Server Error"}})
+    }
 })
 
-router.post('/appendCollection',(req,res) => {   // 把卡片加入收藏, body
-    res.send("status: 200")
+router.post('/appendCollection', async(req,res) => {   // 把卡片加入收藏, body
+    const {account, Card_No} = req.body
+    try{
+        await promisePool.query(
+            `INSERT INTO collect_card(mAccount, Card_No) VALUES("${account}", "${Card_No}")`
+        )
+        res.send({status: 200})
+    }catch (err) {
+        console.error("Error executing query:", err)
+        res.send({status:500, resData:{ error: "Internal Server Error"}}) 
+    }
 })
-router.delete('/delCollection',(req,res) => {   // 把卡片從收藏中刪除, params
-    res.send("status: 200")
+router.delete('/delCollection', async(req,res) => {   // 把卡片從收藏中刪除, params
+    const {account} = req.headers
+    const {Card_No} = req.params
+    try{
+        await promisePool.query(
+            `DELETE FROM collect_card WHERE mAccount = "${account}" AND Card_No = "${Card_No}"`
+        )
+        res.send({status: 200})
+    }catch (err) {
+        console.error("Error executing query:", err)
+        res.send({status:500, resData:{ error: "Internal Server Error"}}) 
+    }
 })
 
 router.get('/getRankingCate', async(req,res) => {   // 查詢分類編號, query, rankingCates格式：[ { "分類編號", "分類名稱" }, … ]
     try {
         // 執行查詢
-        const [rankingCate, fields] = await promisePool.query(
+        const [rankingCate] = await promisePool.query(
             "SELECT Card_No, discount_information FROM Credit_Card"
-        );
-        console.log(rankingCate);
-        res.send("status: 200")
-        res.send({ ok: 1, data: rankingCate });
+        )
+        res.send({ status: 200, rankingCate})
     } catch (err) {
-        console.error("Error executing query:", err);
-        res.send("status: 500")
-        res.send({ error: "Internal Server Error" });
+        console.error("Error executing query:", err)
+        res.send({status: 500, error: "Internal Server Error" })
     }
 })
 router.get('/ranking', async(req,res) => {   // 顯示排行, query, ＊格式：[　{ 名次, 卡片編號 },　… ]
+    const {Category_No} = req.query
     try {
         // 執行查詢
-        const [ranks, fields] = await promisePool.query(
-            "SELECT ranks, Card_No FROM Ranking"
-        );
-        console.log(ranks);
-        res.send("status: 200")
-        res.send({ ok: 1, data: ranks });
+        const [ranksCard] = await promisePool.query(
+            `SELECT ranks, Card_No FROM Ranking WHERE Category_No = "${Category_No}"`
+        )
+        res.send({status: 200, ranksCard});
     } catch (err) {
         console.error("Error executing query:", err);
-        res.send("status: 500")
-        res.send({ error: "Internal Server Error" });
+        res.send({status:500, resData:{ error: "Internal Server Error"}})
     }
 })
 
 router.get('/notiCards', async(req,res) => {   // 顯示有開通知的卡片（篩選用）, headers, ＊格式：[ { 卡片編號 }, … ]
+    const {account} = req.headers
     try {
         // 執行查詢
-        const [cardNo, fields] = await promisePool.query(
-            "SELECT Card_No FROM Credit_Card"
-        );
-        console.log(cardNo);
-        res.send("status: 200")
-        res.send({ ok: 1, data: cardNo });
+        const [cardNo] = await promisePool.query(
+            "SELECT Card_No FROM opening_notification WHERE mAccount = ?",
+            [account]
+        )
+        res.send({status: 200, cardNo});
     } catch (err) {
-        console.error("Error executing query:", err);
-        res.send("status: 500")
-        res.send({ error: "Internal Server Error" });
+        console.error("Error executing query:", err)
+        res.send({status:500, resData:{ error: "Internal Server Error"}})
     }
 })
 router.get('/notiAll', async(req,res) => {   // 顯示所有通知, headers, ＊格式：[ { 卡片編號, 通知 }, … ]
+    const {account} = req.headers
     try {
         // 執行查詢
-        const [notis, fields] = await promisePool.query(
-            "SELECT Card_No, nContent FROM Notificatioin"
-        );
-        console.log(notis);
-        res.send("status: 200")
-        res.send({ ok: 1, data: notis });
+        const [notis] = await promisePool.query(
+            "SELECT Notification.nNo, Notification.nLink, Notification.nDate, Notification.Card_No, opening_notification.mAccount FROM Notification INNER JOIN opening_notification ON Notification.Card_No = opening_notification.Card_No WHERE opening_notification.mAccount = ?",
+            [account]
+        )
+        res.send({status: 200, notis})
     } catch (err) {
         console.error("Error executing query:", err);
-        res.send("status: 500")
-        res.send({ error: "Internal Server Error" });
+        res.send({status:500, resData:{ error: "Internal Server Error"}})
     }
 })
-router.post('/appendNotiCollection',(req,res) => {   // 把通知加入收藏, body
-    res.send("status: 200")
+router.post('/appendNotiCollection', async(req,res) => {   // 把通知加入收藏, body
+    const {account} = req.headers
+    const {nNo} = req.body
+    try{
+        await promisePool.query(
+            `INSERT INTO collecting_notification(mAccount, nNo) VALUES("${account}", "${nNo}")`
+        )
+        res.send({status:200})
+    }catch (err) {
+        console.error("Error executing query:", err)
+        res.send({status:500, resData:{ error: "Internal Server Error"}}) 
+    }
 
 })
-router.delete('/delNotiCollection',(req,res) => {   // 把通知從收藏中刪除, params
-    res.send("status: 200")
-
+router.delete('/delNotiCollection', async(req,res) => {   // 把通知從收藏中刪除, params
+    const {account} = req.headers
+    const {nNo} = req.params
+    try{
+        await promisePool.query(
+            `DELETE FROM collecting_notification WHERE mAccount = "${account}" AND nNo = "${nNo}"`
+        )
+        res.send({status:200})
+    }catch (err) {
+        console.error("Error executing query:", err)
+        res.send({status:500, resData:{ error: "Internal Server Error"}}) 
+    }
 })
 
 // 4. export the router module, used by home page from index.js
