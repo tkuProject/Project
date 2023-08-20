@@ -25,6 +25,18 @@ Img_Site varchar(100) not null,
 PRIMARY KEY(Card_No)
 );
 
+CREATE TABLE discount_description(
+dNo int not null AUTO_INCREMENT,
+Cash_Discount int null,
+Cash_Discount_Percent int null,
+pNo int null,
+Card_Reward int null,
+Card_Reward_Percent int null,
+Shopping_Platform_Reward int null,
+Reward_upper_limit int  null, 
+PRIMARY KEY (dNo)
+);
+
 CREATE TABLE Condition_of_Use(
 uNo int not null AUTO_INCREMENT,
 single_consumption_threshold int null,
@@ -39,19 +51,6 @@ sNo int not null,
 PRIMARY KEY (uNo),
 FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No)  on update cascade,
 FOREIGN KEY (dNo) REFERENCES discount_description(dNo)  on update cascade,
-FOREIGN KEY (sNo) REFERENCES Shopping_Platform(sNo) on update cascade
-);
-
-CREATE TABLE discount_description(
-dNo int not null AUTO_INCREMENT,
-Cash_Discount int null,
-Cash_Discount_Percent int null,
-pNo int null,
-Card_Reward int null,
-Card_Reward_Percent int null,
-Shopping_Platform_Reward int null,
-Reward_upper_limit int  null, 
-PRIMARY KEY (dNo),
 FOREIGN KEY (sNo) REFERENCES Shopping_Platform(sNo) on update cascade
 );
 
@@ -137,7 +136,7 @@ FOREIGN KEY(Card_No) REFERENCES Credit_Card(Card_No)
 
 CREATE TABLE Precautions(
 dNo int not null,
-Precautions_content varchar(1500) null,
+Precautions_content varchar(750) null,
 PRIMARY KEY (dNo, Precautions_content)
 );
 
