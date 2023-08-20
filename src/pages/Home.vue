@@ -1,6 +1,6 @@
 <script setup>
 
-    import { reactive, ref } from 'vue';
+    import { computed, reactive, ref } from 'vue';
     import { useUserStore } from '../store/userStore';
     import Tags from '../components/Tags.vue';
     import CardRanking from '../components/CardRanking.vue';
@@ -14,7 +14,7 @@
             return json.platforms;
         }
     }));
-    const selectedPlatforms = reactive([platforms[0].sNo]);
+    const selectedPlatforms = reactive([platforms?.[0].sNo]);
     // 點選購物平台
     const clickPlatform = sNo => {
         if(selectedPlatforms.includes(sNo)) {
@@ -40,11 +40,27 @@
     const installmentOptions = [3, 6, 9, 12, 18, 24, 30];
     const installmentMonths = ref(installmentOptions[0]);
     const totalCost = ref(null);
-    // 以當日作為消費時間的預設值
+    // 記錄開始日期與結束日期
+    const formatDate = date => {
+        const month = date.getMonth()+1;
+        const day = date.getDate();
+        return `${ date.getFullYear() }-${ month>=10 ? month : ('0'+month) }-${ day>=10 ? day : ('0'+day) }`;
+    };
     const now = new Date();
-    const month = now.getMonth()+1;
-    const day = now.getDate();
-    const date = ref(`${ now.getFullYear() }-${ month>=10 ? month : ('0'+month) }-${ day>=10 ? day : ('0'+day) }`);
+    const startDate = ref(formatDate(now));
+    const passedDaysSelections = {
+        '今天': 0,
+        '未來3天': 3,
+        '未來7天': 7,
+        '未來15天': 15,
+        '未來30天': 30
+    };
+    const passedDays = ref('今天');
+    const endDate = computed(() => {
+        const date = new Date(startDate.value);
+        date.setDate(date.getDate() + passedDaysSelections[passedDays.value]);
+        return formatDate(date);
+    });
 
     const onlyMyCard = ref(false);
 
@@ -58,9 +74,10 @@
                 query: {
                     platforms: selectedPlatforms,
                     installment: installment.value,
-                    costPerMonth: totalCost.value/installmentMonths.value,
+                    costPerMonth: installment.value ? totalCost.value/installmentMonths.value : null,
                     totalCost: totalCost.value,
-                    date: date.value
+                    startDate: startDate.value,
+                    endDate: endDate.value
                 }
             }).then(json => {
                 if(json.status == 200) {
@@ -95,8 +112,8 @@
     <ul class="conditions">
 
         <li>
-            <span class="conditionTitle">是否分期</span>
-            <div class="conditionField">
+            <span class="condition conditionTitle">是否分期</span>
+            <div class="condition conditionField">
                 <label>
                     <input v-model="installment" type="radio" name="installmentOrNot" :value="true">
                     有分期
@@ -110,21 +127,26 @@
         </li>
         
         <li v-if="installment" class="installmentTimes">
-            <span class="conditionTitle">分期期數</span>
+            <span class="condition conditionTitle">分期期數</span>
             <!-- <input v-model="installmentMonths" type="number" class="conditionField" placeholder="請輸入分期期數"> -->
-            <select class="conditionField" v-model="installmentMonths">
+            <select class="condition conditionField" v-model="installmentMonths">
                 <option v-for="item in installmentOptions">{{ item }}</option>
             </select>
         </li>
         
         <li>
-            <span class="conditionTitle">消費總額</span>
-            <input v-model="totalCost" type="number" min="0" oninput="if(value<0) value=0" class="conditionField" placeholder="請輸入消費總金額">
+            <span class="condition conditionTitle">消費總額</span>
+            <input v-model="totalCost" type="number" min="0" oninput="if(value<0) value=0" class="condition conditionField" placeholder="請輸入消費總金額">
         </li>
         
         <li>
-            <span class="conditionTitle">消費日期</span>
-            <input v-model="date" type="date" class="conditionField">
+            <span class="condition">
+                只顯示
+                <select v-model="passedDays">
+                    <option v-for="key in Object.keys(passedDaysSelections)">{{ key }}</option>
+                </select>
+                之內的優惠
+            </span>
         </li>
 
         <li class="compareStart">
@@ -209,9 +231,9 @@
                 color: gray;
             }
 
-            .conditionTitle {
+            .condition {
                 display: inline-block;
-                width: 29%;
+                width: 100%;
                 height: 40px;
                 text-align: center;
                 line-height: 40px;
@@ -219,14 +241,12 @@
                 border: 1px solid gray;
             }
 
+            .conditionTitle {
+                width: 30%;
+            }
+
             .conditionField {
-                display: inline-block;
                 width: 70%;
-                height: 40px;
-                text-align: center;
-                line-height: 40px;
-                background-color: rgba(255, 255, 255, .5);
-                border: 1px solid gray;
             }
         }
 

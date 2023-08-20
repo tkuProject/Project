@@ -107,7 +107,7 @@
             </td>
             <td class="tdDesc content">
                 <div class="scrollBox">
-                    <div>{{ '網站：' + props.platforms.find(platform => platform.sNo == item.discount_description?.sNo)?.sName }}</div>
+                    <div>{{ '網站：' + props.platforms.find(platform => platform.sNo == item.Condition_of_Use?.sNo)?.sName }}</div>
                     <div v-if="item.info.date">{{ '日期：' + item.info.date }}</div>
                     <div v-for="conditionName in Object.keys(conditions)">
                         <template v-if="item.Condition_of_Use?.[conditionName]">

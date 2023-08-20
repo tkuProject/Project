@@ -41,6 +41,8 @@
                 loginAccount.value = '';
                 loginPassword.value = '';
                 logining.value.on = false;
+            } else {
+                alert('登入失敗，請檢查帳號密碼是否正確');
             }
         }
 
@@ -53,9 +55,6 @@
     const registerEmail = ref('');
 
     const register = async () => {
-        registerAccount.value = '';
-        registerPassword.value = '';
-        registerEmail.value = '';
         const data = {
             account: registerAccount.value,
             password: registerPassword.value
