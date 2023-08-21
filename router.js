@@ -130,6 +130,24 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
     try {
         // 執行查詢
         const {platformNos, installment, costPerMonth, totalCost, startDate, endDate} = req.query
+        /*     平台編號,     分期,        單筆分期金額,  消費總額,   開始日期,  結束日期
+        if(installment === true){
+            const [condition] = await promisePool.query(
+                `SELECT * 
+                FROM Condition_of_Use 
+                Natural join discount_description
+                WHERE sNo IN "${platformNos}" 
+                AND cumulative_installments_threshold<="${totalCost}" 
+                AND specific_duration_start>="${startDate}" 
+                and pecific_duration_end<="${endDate}"
+                ((前端傳的開始日期>=優惠條件的開始日期 && 前端傳的開始日期<=優惠條件的結束日期)) || ((前端傳的結束日期>=優惠條件的開始日期) && (前端傳的結束日期<=優惠條件的結束日期))
+                OR sNo IN "${platformNos}" AND single_installments_threshold<="${costPerMonth}" AND specific_duration_start>="${startDate}" and pecific_duration_end<="${endDate}"`
+            )
+        } elif(installment === false){
+
+        }
+        */
+        
         const [cardInfo] = await promisePool.query(
             /*
             if(installment === true){
@@ -154,7 +172,8 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
 })
 
 router.post('/notiOn', async(req,res) => {   // 開啟推播, body, forntend: 會員帳號（account）：字串 ＊放headers
-    const {account, Card_No} = req.body
+    const {account} = req.headers
+    const {Card_No} = req.body
     try{
         await promisePool.query(
             `INSERT INTO opening_notification (mAccount, Card_No) VALUES("${account}", "${Card_No}")`
@@ -167,7 +186,8 @@ router.post('/notiOn', async(req,res) => {   // 開啟推播, body, forntend: �
 
 })
 router.delete('/notiOff', async(req,res) => {   // 關閉推播, params
-    const {account, Card_No} = req.params
+    const {account} = req.headers
+    const {Card_No} = req.body
     try{
         await promisePool.query(
             `DELETE FROM opening_notification WHERE mAccount = "${account}" AND Card_No = "${Card_No}"`
@@ -180,7 +200,9 @@ router.delete('/notiOff', async(req,res) => {   // 關閉推播, params
 })
 
 router.post('/appendCollection', async(req,res) => {   // 把卡片加入收藏, body
-    const {account, Card_No} = req.body
+    const {account} = req.headers
+    const {Card_No} = req.body
+
     try{
         await promisePool.query(
             `INSERT INTO collect_card(mAccount, Card_No) VALUES("${account}", "${Card_No}")`
@@ -209,7 +231,7 @@ router.get('/getRankingCate', async(req,res) => {   // 查詢分類編號, query
     try {
         // 執行查詢
         const [rankingCate] = await promisePool.query(
-            "SELECT Card_No, discount_information FROM Credit_Card"
+            "SELECT * FROM Charts"
         )
         res.send({ status: 200, rankingCate})
     } catch (err) {
