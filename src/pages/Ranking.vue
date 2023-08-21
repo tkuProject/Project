@@ -2,7 +2,6 @@
 
     import { ref } from 'vue';
     import CardPreview from '../components/CardPreview.vue';
-    import CardDetail from '../components/CardDetail.vue';
 
     const rankingType = ref('請選擇排行榜類型');
     const typeOpts = ['這種類型', '那種類型', '還有這種類型'];

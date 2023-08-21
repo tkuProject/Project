@@ -5,6 +5,7 @@
     import Tags from '../components/Tags.vue';
     import CardRanking from '../components/CardRanking.vue';
     import sendReq from '../utils/sendReq';
+    import { dateToDateTime } from '../utils/dateFormat';
 
     const userStore = useUserStore();
 
@@ -41,13 +42,8 @@
     const installmentMonths = ref(installmentOptions[0]);
     const totalCost = ref(null);
     // 記錄開始日期與結束日期
-    const formatDate = date => {
-        const month = date.getMonth()+1;
-        const day = date.getDate();
-        return `${ date.getFullYear() }-${ month>=10 ? month : ('0'+month) }-${ day>=10 ? day : ('0'+day) }`;
-    };
     const now = new Date();
-    const startDate = ref(formatDate(now));
+    const startDate = ref(dateToDateTime(now));
     const passedDaysSelections = {
         '今天': 0,
         '未來3天': 3,
@@ -59,7 +55,7 @@
     const endDate = computed(() => {
         const date = new Date(startDate.value);
         date.setDate(date.getDate() + passedDaysSelections[passedDays.value]);
-        return formatDate(date);
+        return dateToDateTime(date);
     });
 
     const onlyMyCard = ref(false);

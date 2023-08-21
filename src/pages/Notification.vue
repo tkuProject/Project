@@ -1,9 +1,12 @@
 <script setup>
 
     import { ref, reactive } from 'vue';
+    import { useCardStore } from '../store/cardStore';
     import { useUserStore } from '../store/userStore';
     import sendReq from '../utils/sendReq';
+    import { dateToShow } from '../utils/dateFormat';
 
+    const cardStore = useCardStore();
     const userStore = useUserStore();
 
     const notiOnCards = reactive([]);
@@ -15,7 +18,9 @@
         }).then(json => {
             if(json.status == 200) {
                 notiOnCards.length = 0;
-                notiOnCards.push(...json.notiOnCards);
+                for(let item of json.notiOnCards) {
+                    notiOnCards.push(cardStore.findCard(item));
+                }
             }
         })
     };
@@ -28,11 +33,45 @@
         }).then(json => {
             if(json.status == 200) {
                 notis.length = 0;
+                for(let item of json.notifications) {
+                    item.card = cardStore.findCard(item.Card_No);
+                }
                 notis.push(...json.notifications);
             }
         });
     };
     getNotis();
+
+    const notifiCollections = reactive([]);
+    const getNotifiCollections = async () => {
+        await sendReq('notiCollection', {
+            headers: { account: userStore.account }
+        }).then(json => {
+            if(json.status == 200) {
+                notifiCollections.length = 0;
+                notifiCollections.push(...json.collecting_notification);
+            }
+        });
+    };
+    getNotifiCollections();
+
+    const appendNotis = async nNo => {
+        await sendReq('appendNotiCollection', {
+            headers: { account: userStore.account },
+            body: {
+                nNo
+            }
+        }, 'post');
+        getNotifiCollections();
+    };
+
+    const delNotis = async nNo => {
+        await sendReq('delNotiCollection', {
+            headers: { account: userStore.account },
+            params: [nNo]
+        }, 'delete');
+        getNotifiCollections();
+    };
 
     const collectionOnlyActivated = ref(false);
     const cardFilterActivated = ref(false);
@@ -43,13 +82,16 @@
 
     <ul class="linkUl">
         <li v-for="item in notis">
-            <img :src="item.src" alt="">
+            <img :src="item.card.Img_Site" alt="">
             <div class="desc">
-                <div class="cardName">{{ item.cardName }}</div>
-                <div class="description">{{ item.desc }}</div>
+                <div class="cardName">{{ item.card.Card_Name }}</div>
+                <div class="description">{{ item.nContent }}</div>
                 <div class="bottomWrapper">
-                    <div class="dateTime">{{ item.dateTime }}</div>
-                    <button @click="item.notiOn=!item.notiOn">{{ item.notiOn?'移出收藏':'收藏' }}</button>
+                    <div class="dateTime">{{ item.nDate }}</div>
+                    <div class="buttonWrapper">
+                        <button @click="appendNotis(item.nNo)">收藏</button>
+                        <button @click="delNotis(item.nNo)">移出收藏</button>
+                    </div>
                 </div>
             </div>
         </li>
@@ -65,8 +107,8 @@
                     <li v-for="card in notiOnCards" class="cardOptLi">
                         <label>
                             <input type="checkbox" name="showableCard">
-                            <img :src="card.src" alt="">
-                            <span>{{ card.name }}</span>
+                            <img :src="card.Img_Site" alt="">
+                            <span>{{ card.Card_Name }}</span>
                         </label>
                     </li>
                 </div>
@@ -82,8 +124,8 @@
 
     .linkUl {
         display: inline-block;
-        margin-left: 80px;
-        width: 520px;
+        margin-left: 120px;
+        width: 660px;
         background-color: white;
         border: 1px solid gray;
         border-radius: 12px;
@@ -106,6 +148,7 @@
                 display: flex;
                 flex-direction: column;
                 margin-right: 30px;
+                width: 60%;
                 line-height: 1.5;
                 .cardName {
                     color: black;
@@ -120,6 +163,7 @@
                         color: gray;
                     }
                     button {
+                        margin-left: 10px;
                         width: 80px;
                     }
                 }
@@ -132,7 +176,6 @@
         top: 130px;
         display: flex;
         flex-direction: column;
-        margin-right: 20px;
         width: 60px;
         .filterType {
             margin: 0 20px 20px 0;

@@ -30,7 +30,7 @@
     const delFromCollection = async (cardNo) => {
         const { status } = await sendReq('delCollection',
         {
-            header: { account: userStore.account },
+            headers: { account: userStore.account },
             params: [cardNo]
         },
         'delete');
@@ -47,7 +47,7 @@
     const addToCollection = async (cardNo) => {
         const { status } = await sendReq('appendCollection',
         {
-            header: { account: userStore.account },
+            headers: { account: userStore.account },
             body: { Card_No: cardNo }
         },
         'post');

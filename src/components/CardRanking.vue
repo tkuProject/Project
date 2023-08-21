@@ -4,6 +4,7 @@
     import { useCardStore } from '../store/cardStore';
     import { useUserStore } from '../store/userStore';
     import CardPreview from './CardPreview.vue';
+    import { dateToShow } from '../utils/dateFormat';
 
     const props = defineProps(['rankingSrc', 'tab', 'platforms', 'totalCost', 'collectionFilter']);
     const cardStore = useCardStore();
@@ -33,10 +34,10 @@
                         conclusion: null
                     };
                     if(item.Condition_of_Use?.specific_duration_start) {
-                        item.info.date += dateFormat(item.Condition_of_Use.specific_duration_start);
+                        item.info.date += dateToShow(item.Condition_of_Use.specific_duration_start);
                     }
                     if(item.Condition_of_Use?.specific_duration_end) {
-                        item.info.date += '~' + dateFormat(item.Condition_of_Use.specific_duration_end);
+                        item.info.date += '~' + dateToShow(item.Condition_of_Use.specific_duration_end);
                     }
                     if(tabType.includes('_Percent')) {
                         item.info.sortKey = props.totalCost * item.discount_description?.[tabType] / 100;
@@ -77,17 +78,6 @@
         });
         
     });
-
-    const dateFormat = date => {
-        let res = '';
-        const d = new Date(date);
-        const paramYear = d.getFullYear();
-        if(paramYear != new Date().getFullYear()) {
-            res += paramYear + '/';
-        }
-        res += `${ d.getMonth()+1 }/${ d.getDate() }`;
-        return res;
-    };
 
 </script>
 
