@@ -100,10 +100,12 @@ router.post('/login', async(req,res) => {   // 登入, body, 用戶收藏的卡�
 router.get('/getCollectionCards', async(req,res) => {   //卡片收藏, headers, 要抓卡片編號
     try{
         const{account} = req.headers
-        const [collectionCards] = await promisePool.query(
+        
+        const [CardArr] = await promisePool.query(
             "SELECT Card_No From collect_card WHERE mAccount = ?",
             [account]
         )
+        const collectionCards = CardArr.map(item => item.Card_No)
         console.log(collectionCards);
         res.send({status: 200, collectionCards})
     } catch (err){
@@ -134,17 +136,30 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
         if(installment === true){
             const [condition] = await promisePool.query(
                 `SELECT * 
-                FROM Condition_of_Use 
-                Natural join discount_description
+                FROM Condition_of_Use AS cu
+                INNER JOIN discount_description AS dd ON cu.dNO = dd.dNo
+                INNER JOIN credit_card
                 WHERE sNo IN "${platformNos}" 
                 AND cumulative_installments_threshold<="${totalCost}" 
-                AND specific_duration_start>="${startDate}" 
-                and pecific_duration_end<="${endDate}"
+                AND specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
+                OR
+                sNo IN "${platformNos}" 
+                AND cumulative_installments_threshold<="${totalCost}" 
+                AND specific_duration_end BETWEEN "${startDate}" AND "${endDate}"
                 ((前端傳的開始日期>=優惠條件的開始日期 && 前端傳的開始日期<=優惠條件的結束日期)) || ((前端傳的結束日期>=優惠條件的開始日期) && (前端傳的結束日期<=優惠條件的結束日期))
-                OR sNo IN "${platformNos}" AND single_installments_threshold<="${costPerMonth}" AND specific_duration_start>="${startDate}" and pecific_duration_end<="${endDate}"`
+                OR 
+                sNo IN "${platformNos}" 
+                AND single_installments_threshold<="${costPerMonth}" 
+                AND specific_duration_start>="${startDate}" 
+                AND specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
+                OR 
+                sNo IN "${platformNos}" 
+                AND single_installments_threshold<="${costPerMonth}" 
+                AND specific_duration_start>="${startDate}" 
+                AND specific_duration_end BETWEEN "${startDate}" AND "${endDate}"`
             )
         } elif(installment === false){
-
+            const [condition] = await promisePool.query(
         }
         */
         
