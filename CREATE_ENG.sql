@@ -15,13 +15,16 @@ PRIMARY KEY (pNo)
 
 CREATE TABLE Credit_Card(
 Card_No int not null AUTO_INCREMENT,
-Card_Name varchar(10) not null,
 bank varchar(6) not null,
-link  varchar(50) not null,
-application_link varchar(50) not null,
+Card_Name varchar(10) not null,
+Img_Site varchar(150) not null,
+application_link varchar(100) not null,
+annual_fee varchar(100) not null,
+revolving_interest_rates FLOAT null,
+handling_fee FLOAT null,
+application_conditions varchar(100) null,
+card_issuer varchar(10) not null,
 discount_information varchar(300) not null,
-fee varchar(100) not null,
-Img_Site varchar(100) not null,
 PRIMARY KEY(Card_No)
 );
 
