@@ -28,13 +28,15 @@ PRIMARY KEY(Card_No)
 CREATE TABLE discount_description(
 dNo int not null AUTO_INCREMENT,
 Cash_Discount int null,
-Cash_Discount_Percent int null,
+Cash_Discount_Percent FLOAT null,
 pNo int null,
 Card_Reward int null,
-Card_Reward_Percent int null,
+Card_Reward_Percent FLOAT null,
 Shopping_Platform_Reward int null,
 Reward_upper_limit int  null, 
+note varchar(50) null,
 PRIMARY KEY (dNo)
+
 );
 
 CREATE TABLE Condition_of_Use(
@@ -42,9 +44,11 @@ uNo int not null AUTO_INCREMENT,
 single_consumption_threshold int null,
 single_installments_threshold int null,
 cumulative_installments_threshold int null ,
-specific_duration_start date null,
-specific_duration_end date null,
-bank_name varchar(7) null,
+specific_duration_start datetime null,
+specific_duration_end datetime null,
+bank_name varchar(10) null,
+installments_limit int null,
+note varchar(50) null,
 Card_No int null,
 dNo int not null,
 sNo int not null,
