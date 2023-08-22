@@ -17,7 +17,7 @@ CREATE TABLE Credit_Card(
 Card_No int not null AUTO_INCREMENT,
 bank varchar(6) not null,
 Card_Name varchar(10) not null,
-Img_Site varchar(150) not null,
+Img_Site varchar(200) not null,
 application_link varchar(100) not null,
 annual_fee varchar(100) not null,
 revolving_interest_rates FLOAT null,
