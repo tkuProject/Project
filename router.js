@@ -132,53 +132,59 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
     try {
         // 執行查詢
         const {platformNos, installment, costPerMonth, totalCost, startDate, endDate} = req.query
-        /*     平台編號,     分期,        單筆分期金額,  消費總額,   開始日期,  結束日期
-        if(installment === true){
-            const [condition] = await promisePool.query(
+        ///*     平台編號,     分期,        單筆分期金額,  消費總額,   開始日期,  結束日期
+        let filter = []
+        if (installment === true) {
+            [filter] = await promisePool.query(
                 `SELECT * 
                 FROM Condition_of_Use AS cu
                 INNER JOIN discount_description AS dd ON cu.dNO = dd.dNo
-                INNER JOIN credit_card
-                WHERE sNo IN "${platformNos}" 
-                AND cumulative_installments_threshold<="${totalCost}" 
-                AND specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
-                OR
-                sNo IN "${platformNos}" 
-                AND cumulative_installments_threshold<="${totalCost}" 
-                AND specific_duration_end BETWEEN "${startDate}" AND "${endDate}"
-                ((前端傳的開始日期>=優惠條件的開始日期 && 前端傳的開始日期<=優惠條件的結束日期)) || ((前端傳的結束日期>=優惠條件的開始日期) && (前端傳的結束日期<=優惠條件的結束日期))
+                LEFT JOIN credit_card AS cc ON cu.Card_No = cc.Card_No
+                WHERE 
+                sNo IN (${platformNos})
+                AND (
+                    (cumulative_installments_threshold <= "${totalCost}" 
+                        AND specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
+                    )
+                    OR(
+                        specific_duration_end BETWEEN "${startDate}" AND "${endDate}"
+                    )
+                    OR(
+                        single_installments_threshold <= "${costPerMonth}" 
+        				AND specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
+                    )
+                    OR(
+                        specific_duration_end BETWEEN "${startDate}" AND "${endDate}"
+                    )
+                )
+                OR (
+                    cu.Card_No IS NULL
+                    AND cc.bank = cu.bank_name
+                )`
+            );
+        } else if (installment === false) {
+        [filter] = await promisePool.query(
+            `SELECT * 
+            FROM Condition_of_Use AS cu
+            INNER JOIN discount_description AS dd ON cu.dNO = dd.dNo
+            LEFT JOIN credit_card AS cc ON cu.Card_No = cc.Card_No
+            WHERE 
+            sNo IN (${platformNos})
+            AND (
+    				(Single_consumption_threshold <= "${totalCost}" 
+    				AND specific_duration_start BETWEEN "${startDate}" AND "${endDate}")
                 OR 
-                sNo IN "${platformNos}" 
-                AND single_installments_threshold<="${costPerMonth}" 
-                AND specific_duration_start>="${startDate}" 
-                AND specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
-                OR 
-                sNo IN "${platformNos}" 
-                AND single_installments_threshold<="${costPerMonth}" 
-                AND specific_duration_start>="${startDate}" 
-                AND specific_duration_end BETWEEN "${startDate}" AND "${endDate}"`
+                (specific_duration_end BETWEEN "${startDate}" AND "${endDate}")
             )
-        } elif(installment === false){
-            const [condition] = await promisePool.query(
-        }
-        */
-        
-        const [cardInfo] = await promisePool.query(
-            /*
-            if(installment === true){
-                `SELECT single_installments_threshold,
-                    cumulative_installments_threshold,
-                    specific_duration_start,
-                    specific_duration_end
-                FROM Condition_of_Use
-                WHERE`
-            } elif(installment === false) {
-
-            }
-            */
-            "SELECT Card_No, discount_information FROM Credit_Card"
+            OR (
+                cu.Card_No IS NULL
+                AND cc.bank = cu.bank_name
+            )`
         );
-        res.send({status: 200});
+}
+        //*/
+        console.log(filter)
+        res.send({status: 200, filter});
     } catch (err) {
         console.error("Error executing query:", err)
         res.send({status:500, resData:{ error: "Internal Server Error"}})
@@ -200,9 +206,9 @@ router.post('/notiOn', async(req,res) => {   // 開啟推播, body, forntend: �
     }
 
 })
-router.delete('/notiOff', async(req,res) => {   // 關閉推播, params
+router.delete('/notiOff/:Card_No', async(req,res) => {   // 關閉推播, params
     const {account} = req.headers
-    const {Card_No} = req.body
+    const {Card_No} = req.params.Card_No
     try{
         await promisePool.query(
             `DELETE FROM opening_notification WHERE mAccount = "${account}" AND Card_No = "${Card_No}"`
@@ -228,9 +234,9 @@ router.post('/appendCollection', async(req,res) => {   // 把卡片加入收藏,
         res.send({status:500, resData:{ error: "Internal Server Error"}}) 
     }
 })
-router.delete('/delCollection', async(req,res) => {   // 把卡片從收藏中刪除, params
+router.delete('/delCollection/:Card_No', async(req,res) => {   // 把卡片從收藏中刪除, params
     const {account} = req.headers
-    const {Card_No} = req.params
+    const {Card_No} = req.params.Card_No
     try{
         await promisePool.query(
             `DELETE FROM collect_card WHERE mAccount = "${account}" AND Card_No = "${Card_No}"`
@@ -310,9 +316,9 @@ router.post('/appendNotiCollection', async(req,res) => {   // 把通知加入收
     }
 
 })
-router.delete('/delNotiCollection', async(req,res) => {   // 把通知從收藏中刪除, params
+router.delete('/delNotiCollection/:nNo', async(req,res) => {   // 把通知從收藏中刪除, params
     const {account} = req.headers
-    const {nNo} = req.params
+    const {nNo} = req.params.nNo
     try{
         await promisePool.query(
             `DELETE FROM collecting_notification WHERE mAccount = "${account}" AND nNo = "${nNo}"`
