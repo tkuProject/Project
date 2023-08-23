@@ -236,7 +236,7 @@ router.post('/appendCollection', async(req,res) => {   // 把卡片加入收藏,
 })
 router.delete('/delCollection/:Card_No', async(req,res) => {   // 把卡片從收藏中刪除, params
     const {account} = req.headers
-    const {Card_No} = req.params.Card_No
+    const Card_No = req.params.Card_No
     try{
         await promisePool.query(
             `DELETE FROM collect_card WHERE mAccount = "${account}" AND Card_No = "${Card_No}"`
