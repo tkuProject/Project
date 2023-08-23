@@ -278,10 +278,11 @@ router.get('/notiCards', async(req,res) => {   // 顯示有開通知的卡片（
     const {account} = req.headers
     try {
         // 執行查詢
-        const [cardNo] = await promisePool.query(
+        const [CardArr] = await promisePool.query(
             "SELECT Card_No FROM opening_notification WHERE mAccount = ?",
             [account]
         )
+        const [cardNo] = CardArr.map(item => item.Card_No)
         res.send({status: 200, cardNo});
     } catch (err) {
         console.error("Error executing query:", err)
