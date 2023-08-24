@@ -11,7 +11,7 @@
     const cardStore = useCardStore();
     const userStore = useUserStore();
 
-    cardStore.collectionCards = computed(() => {
+    const collectionCards = computed(() => {
         return cardStore.allCards.filter(item => {
             if(userStore.collectionCards) {
                 return userStore.collectionCards.includes(item.Card_No);
@@ -19,7 +19,7 @@
         });
     });
 
-    cardStore.otherCards = computed(() => {
+    const otherCards = computed(() => {
         return cardStore.allCards.filter(item => {
             if(userStore.collectionCards) {
                 return !(userStore.collectionCards.includes(item.Card_No));
@@ -41,8 +41,7 @@
             alert('刪除失敗');
         }
         // 刷新userStore的collectionCards
-        userStore.getCollectionCards();
-
+        await userStore.getCollectionCards();
     };
     const addToCollection = async (cardNo) => {
         const { status } = await sendReq('appendCollection',
@@ -58,7 +57,7 @@
             alert('添加失敗');
         }
         // 刷新userStore的collectionCards
-        userStore.getCollectionCards();
+        await userStore.getCollectionCards();
     };
 
     const notiOnCards = reactive([]);
@@ -70,7 +69,7 @@
         }).then(json => {
             if(json.status == 200) {
                 notiOnCards.length = 0;
-                notiOnCards.push(...json.notiOnCards);
+                notiOnCards.push(...json.cardNo);
             }
         })
     };
@@ -115,11 +114,11 @@
 
     <template v-if="userStore.account">
         <span>我收藏的卡片：</span>
-        <ul v-if="cardStore.collectionCards?.length >= 0">
-            <li v-for="card in cardStore.collectionCards">
+        <ul v-if="collectionCards?.length >= 0">
+            <li v-for="card in collectionCards">
                 <CardPreview :card="card">
                     <template #header v-if="userStore.account">
-                        <button v-if="notiOnCards?.includes(card.Card_No)" @click="turnOffNoti(card.Card_No)" class="informBtn" title="關閉通知" :style="{ backgroundImage: `url('` + (infoOffImg) + `')` }">
+                        <button v-if="notiOnCards.includes(card.Card_No)" @click="turnOffNoti(card.Card_No)" class="informBtn" title="關閉通知" :style="{ backgroundImage: `url('` + (infoOffImg) + `')` }">
                         </button>
                         <button v-else @click="turnOnNoti(card.Card_No)" class="informBtn" title="開啟通知" :style="{ backgroundImage: `url('` + (infoOnImg) + `')` }">
                         </button>
@@ -127,15 +126,15 @@
                     </template>
                 </CardPreview>
             </li>
-            <div v-if="cardStore.collectionCards.length==0" class="noCard">目前沒有收藏卡片喔～</div>
+            <div v-if="collectionCards.length==0" class="noCard">目前沒有收藏卡片喔～</div>
         </ul>
         <div v-else>讀取中</div>
         <hr>
     </template>
 
     <span>{{ userStore.account?'其他卡片：':'卡片列表' }}</span>
-    <ul v-if="(userStore.account?cardStore.otherCards:cardStore.allCards)?.length >= 0">
-        <li v-for="card in userStore.account?cardStore.otherCards:cardStore.allCards">
+    <ul v-if="(userStore.account?otherCards:cardStore.allCards)?.length >= 0">
+        <li v-for="card in userStore.account?otherCards:cardStore.allCards">
             <CardPreview :card="card">
                 <template #header v-if="userStore.account">
                     <button v-if="notiOnCards?.includes(card.Card_No)" @click="turnOffNoti(card.Card_No)" class="informBtn" title="關閉通知" :style="{ backgroundImage: `url('` + (infoOffImg) + `')` }">
@@ -146,7 +145,7 @@
                 </template>
             </CardPreview>
         </li>
-        <div v-if="(userStore.account?cardStore.otherCards:cardStore.allCards).length==0" class="noCard">目前沒有其他卡片喔～</div>
+        <div v-if="(userStore.account?otherCards:cardStore.allCards).length==0" class="noCard">目前沒有其他卡片喔～</div>
     </ul>
     <div v-else>讀取中</div>
 

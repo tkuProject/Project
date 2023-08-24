@@ -4,9 +4,7 @@ import sendReq from '../utils/sendReq';
 export const useCardStore = defineStore('card', {
 
     state: () => ({
-        allCards: [],
-        collectionCards: [],
-        otherCards: []
+        allCards: []
     }),
 
     actions: {

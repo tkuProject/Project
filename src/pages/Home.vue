@@ -38,8 +38,7 @@
 
     // 記錄使用者在表單輸入的值
     const installment = ref(false);
-    const installmentOptions = [3, 6, 9, 12, 18, 24, 30];
-    const installmentMonths = ref(installmentOptions[0]);
+    const affordableAmount = ref(null);
     const totalCost = ref(null);
     // 記錄開始日期與結束日期
     const now = new Date();
@@ -70,7 +69,7 @@
                 query: {
                     platforms: selectedPlatforms,
                     installment: installment.value,
-                    costPerMonth: installment.value ? totalCost.value/installmentMonths.value : null,
+                    costPerMonth: installment.value ? affordableAmount/12 : null,
                     totalCost: totalCost.value,
                     startDate: startDate.value,
                     endDate: endDate.value
@@ -101,6 +100,7 @@
         <ul>
             <li v-for="item in platforms">
                 <img @click="clickPlatform(item.sNo)" :src="item.sImg_Site" alt="" :class="{ platformSelected: selectedPlatforms.includes(item.sNo) }">
+                <span>{{ item.sname }}</span>
             </li>
         </ul>
     </div>
@@ -122,12 +122,9 @@
             </div>
         </li>
         
-        <li v-if="installment" class="installmentTimes">
-            <span class="condition conditionTitle">分期期數</span>
-            <!-- <input v-model="installmentMonths" type="number" class="conditionField" placeholder="請輸入分期期數"> -->
-            <select class="condition conditionField" v-model="installmentMonths">
-                <option v-for="item in installmentOptions">{{ item }}</option>
-            </select>
+        <li v-if="installment" class="affordableAmount">
+            <span class="condition conditionTitle">一年願意負擔的金額</span>
+            <input v-model="affordableAmount" type="number" class="condition conditionField" placeholder="請輸入一年願意負擔的金額">
         </li>
         
         <li>
@@ -188,21 +185,26 @@
             justify-content: space-around;
             align-items: center;
             margin: 40px auto;
+            margin-bottom: 50px;
             height: 64px;
             li {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
                 img {
-                    width: 40px;
+                    margin-bottom: 10px;
+                    width: 80px;
                     height: 40px;
                     border-radius: 12px;
                     cursor: pointer;
                     transition: .2s;
                 }
                 img:hover {
-                    width: 60px;
+                    width: 120px;
                     height: 60px;
                 }
                 .platformSelected {
-                    width: 60px;
+                    width: 120px;
                     height: 60px;
                     border: 2px solid gray;
                 }
@@ -246,7 +248,7 @@
             }
         }
 
-        .installmentTimes {
+        .affordableAmount {
             span, input {
                 background-color: rgba(207, 246, 255, .5);
             }

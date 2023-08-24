@@ -26,13 +26,12 @@
             'login',
             {
                 body: {
-                    account: loginAccount,
-                    password: loginPassword
+                    account: loginAccount.value,
+                    password: loginPassword.value
                 }
             },
             'post'
         );
-
         if(status == 200) {
             if(loginSucc) {
                 userStore.account = loginAccount.value;
@@ -44,6 +43,11 @@
             } else {
                 alert('登入失敗，請檢查帳號密碼是否正確');
             }
+        } else if(status == 400) {
+            // 具體情況再討論
+            if(!loginSucc) {
+                alert('登入失敗，請檢查帳號密碼是否正確');
+            }
         }
 
     };
@@ -52,7 +56,7 @@
     const registerMode = ref({ on: false });
     const registerAccount = ref('');
     const registerPassword = ref('');
-    const registerEmail = ref('');
+    const registerEmail = ref(null);
 
     const register = async () => {
         const data = {
@@ -98,7 +102,7 @@
     <div class="header">
         <div class="titleWrapper">
             <router-link to="/" class="logo">CCC</router-link>
-            <span>Credit Card Comparison</span>
+            <span>Credit Card Comparator</span>
         </div>
         <ul>
             <li v-for="(item, index) in headerSprites">
