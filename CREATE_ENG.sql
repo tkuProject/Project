@@ -1,7 +1,7 @@
 CREATE TABLE Shopping_Platform(
 sNo int not null AUTO_INCREMENT,
 sName VARCHAR(15) not null,
-sImg_Site VARCHAR(800) not null,
+sImg_Site VARCHAR(150) not null,
 PRIMARY KEY(sNo)
 );
 
