@@ -23,7 +23,7 @@ annual_fee varchar(100) not null,
 revolving_interest_rates FLOAT null,
 handling_fee FLOAT null,
 application_conditions varchar(100) null,
-card_issuer varchar(10) not null,
+card_issuer varchar(10) null,
 discount_information varchar(300) not null,
 PRIMARY KEY(Card_No)
 );
