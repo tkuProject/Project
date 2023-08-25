@@ -115,7 +115,7 @@
                 <button class="profilePic roundBtn"></button>
                 <ul v-if="avatarHovering" class="profileList">
                     <li class="myCollection"><router-link to="/cards">收藏</router-link></li>
-                    <li class="myNotification"><router-link to="/notification">通知</router-link></li>
+                    <!-- <li class="myNotification"><router-link to="/notification">通知</router-link></li> -->
                     <li @click="settingMode.on=true" class="settingSwitch">設定</li>
                     <hr>
                     <li @click="logout" class="logout">登出</li>
@@ -332,9 +332,11 @@
                 .myCollection {
                     background-position-y: 12px;
                 }
+                /*
                 .myNotification {
                     background-position-y: -19px;
                 }
+                */
                 .settingSwitch {
                     background-position-y: -50px;
                 }
