@@ -117,11 +117,11 @@ router.get('/getCollectionCards', async(req,res) => {   //卡片收藏, headers,
 router.get('/getPlatform', async(req,res) => {   // 顯示購物平台, query, ＊格式：[ 購物平台（*） ]
     try {
         // 執行查詢
-        const [shoppingPlatform] = await promisePool.query(
+        const [platform] = await promisePool.query(
             "SELECT * FROM Shopping_Platform"
         );
-        console.log(shoppingPlatform);
-        res.send({status: 200, shoppingPlatform })
+        console.log(platform);
+        res.send({status: 200, platform })
     } catch (err) {
         console.error("Error executing query:", err)
         res.send({status:500, resData:{ error: "Internal Server Error"}})
@@ -132,10 +132,41 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
     try {
         // 執行查詢
         const {platformNos, installment, costPerMonth, totalCost, startDate, endDate} = req.query
-        ///*     平台編號,     分期,        單筆分期金額,  消費總額,   開始日期,  結束日期
-        let filter = []
+        let results = [];
+        if (installment === false) {
+            results = await promisePool.query(
+        		`SELECT * 
+                FROM Condition_of_Use AS cu
+                NATURAL JOIN discount_description AS dd ON cu.dNO = dd.dNo
+                WHERE 
+                sNo IN (${platformNos})
+                AND (Single_consumption_threshold <= "${totalCost}")
+        		AND (
+                    (specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
+                    OR specific_duration_end BETWEEN "${startDate}" AND "${endDate}")
+                    OR()
+                )`
+        	)
+        } else if (installment === true) {
+            results = await promisePool.query(
+                `SELECT * 
+                FROM Condition_of_Use AS cu
+                NATURAL JOIN discount_description AS dd ON cu.dNO = dd.dNo
+                WHERE 
+                sNo IN (${platformNos})
+                AND (
+                    cumulative_installments_threshold <= "${totalCost}"
+                    OR single_installments_threshold <= "${costPerMonth}"
+                )
+                AND (
+                    specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
+                    OR specific_duration_end BETWEEN "${startDate}" AND "${endDate}"
+                )`
+            )
+        }      
+        /*
         if (installment === true) {
-            [filter] = await promisePool.query(
+            filter = await promisePool.query(
                 `SELECT * 
                 FROM Condition_of_Use AS cu
                 INNER JOIN discount_description AS dd ON cu.dNO = dd.dNo
@@ -163,7 +194,7 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
                 )`
             );
         } else if (installment === false) {
-        [filter] = await promisePool.query(
+        filter = await promisePool.query(
             `SELECT * 
             FROM Condition_of_Use AS cu
             INNER JOIN discount_description AS dd ON cu.dNO = dd.dNo
@@ -181,10 +212,9 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
                 AND cc.bank = cu.bank_name
             )`
         );
-}
-        //*/
-        console.log(filter)
-        res.send({status: 200, filter});
+    }*/
+        console.log(results)
+        res.send({status: 200, results});
     } catch (err) {
         console.error("Error executing query:", err)
         res.send({status:500, resData:{ error: "Internal Server Error"}})
@@ -208,7 +238,7 @@ router.post('/notiOn', async(req,res) => {   // 開啟推播, body, forntend: �
 })
 router.delete('/notiOff/:Card_No', async(req,res) => {   // 關閉推播, params
     const {account} = req.headers
-    const {Card_No} = req.params.Card_No
+    const Card_No = req.params.Card_No
     try{
         await promisePool.query(
             `DELETE FROM opening_notification WHERE mAccount = "${account}" AND Card_No = "${Card_No}"`
@@ -248,6 +278,25 @@ router.delete('/delCollection/:Card_No', async(req,res) => {   // 把卡片從�
     }
 })
 
+router.get('/searchCards', async(req,res) =>{
+    const keyIn = req.query.keyIn
+    try{
+        const CardArr = await promisePool.query(
+            `SELECT Card_No 
+            FROM Keyword
+            NATURAL JOIN conform 
+            WHERE Keyword.kName LIKE ?`,
+            [`%${keyIn}%`]
+        )
+        console.log(CardArr)
+        const cardNo = CardArr[0].map(item => item.Card_No)
+        res.send({status: 200, cardNo})
+    } catch (err) {
+        console.error("Error executing query:", err)
+        res.send({status: 500, error: "Internal Server Error" })
+    }
+})
+
 router.get('/getRankingCate', async(req,res) => {   // 查詢分類編號, query, rankingCates格式：[ { "分類編號", "分類名稱" }, … ]
     try {
         // 執行查詢
@@ -278,11 +327,11 @@ router.get('/notiCards', async(req,res) => {   // 顯示有開通知的卡片（
     const {account} = req.headers
     try {
         // 執行查詢
-        const [CardArr] = await promisePool.query(
+        const CardArr = await promisePool.query(
             "SELECT Card_No FROM opening_notification WHERE mAccount = ?",
             [account]
         )
-        const [cardNo] = CardArr.map(item => item.Card_No)
+        const cardNo = CardArr[0].map(item => item.Card_No)
         res.send({status: 200, cardNo});
     } catch (err) {
         console.error("Error executing query:", err)
