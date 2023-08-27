@@ -97,6 +97,28 @@ router.post('/login', async(req,res) => {   // 登入, body, 用戶收藏的卡�
     }
 })
 
+router.put('/setPsw', async(req,res) => {   // 設定密碼, params
+    const {account} = req.headers
+    const {newPsw} = req.params.newPsw
+    try {
+
+    } catch(err){
+        console.error("Error executing query:", err);
+        res.send({status:500, resData:{ error: "Internal Server Error" }});
+    }
+})
+
+router.put('setEmail', async(req,res) => {
+    const {account} = req.headers
+    const {newEmail} = req.params.account
+    try {
+        
+    } catch(err){
+        console.error("Error executing query:", err);
+        res.send({status:500, resData:{ error: "Internal Server Error" }});
+    }
+})
+
 router.get('/getCollectionCards', async(req,res) => {   //卡片收藏, headers, 要抓卡片編號
     try{
         const{account} = req.headers
@@ -117,11 +139,11 @@ router.get('/getCollectionCards', async(req,res) => {   //卡片收藏, headers,
 router.get('/getPlatform', async(req,res) => {   // 顯示購物平台, query, ＊格式：[ 購物平台（*） ]
     try {
         // 執行查詢
-        const [platform] = await promisePool.query(
+        const [platforms] = await promisePool.query(
             "SELECT * FROM Shopping_Platform"
         );
-        console.log(platform);
-        res.send({status: 200, platform })
+        console.log(platforms);
+        res.send({status: 200, platforms })
     } catch (err) {
         console.error("Error executing query:", err)
         res.send({status:500, resData:{ error: "Internal Server Error"}})
@@ -129,41 +151,43 @@ router.get('/getPlatform', async(req,res) => {   // 顯示購物平台, query, �
 })
 
 router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{優惠方案（object）, 卡片編號},　… ]
+    const {platformNos, installment, costPerMonth, totalCost, startDate, endDate} = req.query
     try {
-        // 執行查詢
-        const {platformNos, installment, costPerMonth, totalCost, startDate, endDate} = req.query
-        let results = [];
-        if (installment === false) {
-            results = await promisePool.query(
-        		`SELECT * 
-                FROM Condition_of_Use AS cu
-                NATURAL JOIN discount_description AS dd ON cu.dNO = dd.dNo
-                WHERE 
-                sNo IN (${platformNos})
-                AND (Single_consumption_threshold <= "${totalCost}")
-        		AND (
-                    (specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
-                    OR specific_duration_end BETWEEN "${startDate}" AND "${endDate}")
-                    OR()
-                )`
-        	)
-        } else if (installment === true) {
-            results = await promisePool.query(
-                `SELECT * 
-                FROM Condition_of_Use AS cu
-                NATURAL JOIN discount_description AS dd ON cu.dNO = dd.dNo
-                WHERE 
-                sNo IN (${platformNos})
-                AND (
-                    cumulative_installments_threshold <= "${totalCost}"
-                    OR single_installments_threshold <= "${costPerMonth}"
-                )
-                AND (
-                    specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
-                    OR specific_duration_end BETWEEN "${startDate}" AND "${endDate}"
-                )`
+        // 組成字串、執行查詢
+        let str = `SELECT * 
+		FROM Condition_of_Use AS cu
+		NATURAL JOIN discount_description 
+		LEFT JOIN Credit_Card ON cu.Card_No = Credit_Card.Card_No
+		WHERE sNo IN "${platformNos}
+		AND (                                                           //時間條件
+			(specific_duration_start <="${startDate}"
+				AND
+				specific_duration_end >="${startDate}")
+			OR
+			(specific_duration_start <="${endDate}"
+				AND
+				specific_duration_end >="${endDate}")
+			OR
+			(specific_duration_start >="${startDate}"
+				AND
+				specific_duration_end <="${endDate}"))
+		`
+        if(installment === false) {                                     //分期與否
+			str+= 'AND (Single_consumption_threshold <= "${totalCost}")'
+		} else{
+			str+= 'AND (cumulative_installments_threshold <= "${totalCost}" OR single_installments_threshold <= "${costPerMonth}")'
+		}
+		let [results] = await promisePool.query(                        //查詢語句
+			str
+		)
+        if(results.cu.Card_No === null){
+            await promisePool.query(
+                `SELECT card_No
+                FROM
+                WHERE`
             )
-        }      
+        }
+        
         /*
         if (installment === true) {
             filter = await promisePool.query(
@@ -289,8 +313,8 @@ router.get('/searchCards', async(req,res) =>{
             [`%${keyIn}%`]
         )
         console.log(CardArr)
-        const cardNo = CardArr[0].map(item => item.Card_No)
-        res.send({status: 200, cardNo})
+        const cardNos = CardArr[0].map(item => item.Card_No)
+        res.send({status: 200, cardNos})
     } catch (err) {
         console.error("Error executing query:", err)
         res.send({status: 500, error: "Internal Server Error" })
