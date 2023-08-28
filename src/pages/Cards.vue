@@ -155,6 +155,7 @@
                 </li>
             </template>
             <div v-if="collectionCards.length==0" class="noCard">目前沒有收藏卡片喔～</div>
+            <div v-if="searchingMode && !collectionCards.some(item => keyNos.includes(item.Card_No))" class="noCard">沒有相關的卡片</div>
         </ul>
         <div v-else>讀取中</div>
         <hr>
@@ -176,6 +177,7 @@
             </li>
         </template>
         <div v-if="(userStore.account?otherCards:cardStore.allCards).length==0" class="noCard">目前沒有其他卡片喔～</div>
+        <div v-if="searchingMode && !otherCards.some(item => keyNos.includes(item.Card_No))" class="noCard">沒有相關的卡片</div>
     </ul>
     <div v-else>讀取中</div>
 
