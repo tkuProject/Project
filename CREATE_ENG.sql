@@ -143,6 +143,7 @@ FOREIGN KEY(Card_No) REFERENCES Credit_Card(Card_No)
 CREATE TABLE Precautions(
 dNo int not null,
 Precautions_content varchar(750) null,
+important_precautions_content varchar(500) null,
 PRIMARY KEY (dNo, Precautions_content)
 );
 
