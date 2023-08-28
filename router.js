@@ -97,22 +97,34 @@ router.post('/login', async(req,res) => {   // 登入, body, 用戶收藏的卡�
     }
 })
 
-router.put('/setPsw', async(req,res) => {   // 設定密碼, params
+router.put('/setPsw', async(req,res) => {   // 設定密碼, body
     const {account} = req.headers
-    const {newPsw} = req.params.newPsw
+    const {newPsw} = req.body
     try {
-
+        await promisePool.query(
+            `UPDATE member
+            SET mPassword = ?
+            WHERE mAccount = ?`,
+            [newPsw, account]
+        )
+        res.send({status:200})
     } catch(err){
         console.error("Error executing query:", err);
         res.send({status:500, resData:{ error: "Internal Server Error" }});
     }
 })
 
-router.put('setEmail', async(req,res) => {
+router.put('/setEmail', async(req,res) => {
     const {account} = req.headers
-    const {newEmail} = req.params.account
+    const {newEmail} = req.body
     try {
-        
+        await promisePool.query(
+            `UPDATE member
+            SET email = ?
+            WHERE mAccount = ?`,
+            [newEmail, account]
+        )
+        res.status({status: 200})
     } catch(err){
         console.error("Error executing query:", err);
         res.send({status:500, resData:{ error: "Internal Server Error" }});
@@ -158,7 +170,7 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
 		FROM Condition_of_Use AS cu
 		NATURAL JOIN discount_description 
 		LEFT JOIN Credit_Card ON cu.Card_No = Credit_Card.Card_No
-		WHERE sNo IN "${platformNos}
+		WHERE sNo IN "${platformNos}"
 		AND (                                                           //時間條件
 			(specific_duration_start <="${startDate}"
 				AND
@@ -177,16 +189,18 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
 		} else{
 			str+= 'AND (cumulative_installments_threshold <= "${totalCost}" OR single_installments_threshold <= "${costPerMonth}")'
 		}
-		let [results] = await promisePool.query(                        //查詢語句
-			str
-		)
-        if(results.cu.Card_No === null){
-            await promisePool.query(
+		let [results] = await promisePool.query(str)                        //查詢語句
+		
+        for(let result of results){
+            if(result.Card_No === null){
+                const cardNos = await promisePool.query(
                 `SELECT card_No
-                FROM
-                WHERE`
-            )
-        }
+                FROM Credit_Card
+                WHERE bank = ?`,
+                [result.bank])
+                result.cardNos = cardNos.map(card => card.Card_No);
+            }
+        }        
         
         /*
         if (installment === true) {
@@ -324,10 +338,10 @@ router.get('/searchCards', async(req,res) =>{
 router.get('/getRankingCate', async(req,res) => {   // 查詢分類編號, query, rankingCates格式：[ { "分類編號", "分類名稱" }, … ]
     try {
         // 執行查詢
-        const [rankingCate] = await promisePool.query(
+        const [rankingCates] = await promisePool.query(
             "SELECT * FROM Charts"
         )
-        res.send({ status: 200, rankingCate})
+        res.send({ status: 200, rankingCates})
     } catch (err) {
         console.error("Error executing query:", err)
         res.send({status: 500, error: "Internal Server Error" })
