@@ -56,16 +56,16 @@
     const registerMode = ref({ on: false });
     const registerAccount = ref('');
     const registerPassword = ref('');
-    const registerEmail = ref(null);
+    // const registerEmail = ref(null);
 
     const register = async () => {
         const data = {
             account: registerAccount.value,
             password: registerPassword.value
         };
-        if(registerEmail.value) {
-            data.email = registerEmail;
-        }
+        // if(registerEmail.value) {
+        //     data.email = registerEmail;
+        // }
 
         const { status, qualified } = await sendReq('regist', { body: data }, 'post');
 
@@ -85,9 +85,28 @@
 
     // 設定
     const editingPassword = ref(false);
-    const editingEmail = ref(false);
+    // const editingEmail = ref(false);
 
     const settingMode = ref({ on: false });
+
+    const newPsw = ref('');
+
+    const editPassword = () => {
+        sendReq('setPsw', {
+            headers: {
+                account: userStore.account
+            },
+            params: [newPsw.value]
+        }, 'put').then(json => {
+            if(json.status == 200) {
+                alert('已成功修改密碼');
+                newPsw.value = '';
+                editingPassword.value = false;
+            } else {
+                alert('未能成功修改密碼');
+            }
+        });
+    };
 
     const logout = () => {
         if(confirm('確定要登出嗎？')) {
@@ -163,10 +182,10 @@
                     密碼：<br>
                     <input type="password" v-model="registerPassword" placeholder="請設定您的密碼">
                 </label>
-                <label>
+                <!-- <label>
                     信箱：（非必填）<br>
                     <input type="text" v-model="registerEmail" placeholder="請填入您的信箱">
-                </label>
+                </label> -->
                 <button @click="register()" type="button">
                     確認
                 </button>
@@ -181,15 +200,15 @@
                 <li class="nickname">
                     密碼
                     <template v-if="editingPassword">
-                        <input type="text">
+                        <input v-model="newPsw" type="password" placeholder="請輸入新密碼">
                         <button @click="editingPassword=false" class="cancelBtn">取消</button>
-                        <button @click="editingPassword=false">確認</button>
+                        <button @click="editPassword">確認</button>
                     </template>
-                    <template v-else><span class="userInfo">{{ userName }}</span>
+                    <template v-else>
                         <button @click="editingPassword=true" class="editBtn">編輯</button>
                     </template>
                 </li>
-                <li class="email">
+                <!-- <li class="email">
                     信箱
                     <template v-if="editingEmail">
                         <input type="text">
@@ -202,7 +221,7 @@
                 </li>
                 <li class="notificationSetting">
                     <router-link to="/cards" @click="settingMode.on=false">通知設定 &gt;</router-link>
-                </li>
+                </li> -->
             </ul>
         </template>
     </PopUpBox>        
@@ -362,7 +381,6 @@
             margin: 10px 40px;
             input {
                 margin-top: 10px;
-                text-indent: 2px;
             }
         }
         button {

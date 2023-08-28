@@ -4,7 +4,7 @@ import sendReq from "../utils/sendReq";
 export const useUserStore = defineStore('user', {
     state: () => ({
         account: null,
-        email: '',
+        // email: '',
         collectionCards: []
     }),
     actions: {
