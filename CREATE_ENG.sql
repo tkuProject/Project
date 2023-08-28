@@ -94,7 +94,7 @@ PRIMARY KEY (Category_No)
 CREATE TABLE Ranking(
 Card_No int not null ,
 Category_No int not null,
-Ranks int null,
+weight_score int null,
 PRIMARY KEY (Card_No, Category_No),
 FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on update cascade,
 FOREIGN KEY (Category_No) REFERENCES Charts(Category_No) on update cascade
