@@ -144,7 +144,7 @@ CREATE TABLE Precautions(
 dNo int not null,
 Precautions_content varchar(750) null,
 important_precautions_content varchar(500) null,
-PRIMARY KEY (dNo, Precautions_content)
+PRIMARY KEY (dNo, Precautions_content, important_precautions_content)
 );
 
 CREATE TABLE day_of_the_week(
