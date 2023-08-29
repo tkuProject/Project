@@ -63,6 +63,8 @@
     const startCompare = async () => {
         if(!totalCost.value) {
             alert('要先輸入消費總額才能開始比較喔～');
+        } else if (installment.value && !affordableAmount.value) {
+            alert('分期付款的情況需要輸入一年願意負擔的金額喔～');
         } else {
             rankingSrc.length = 0;
             rankingSrc.push(...await sendReq('compFilter', {

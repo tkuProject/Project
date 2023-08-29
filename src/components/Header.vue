@@ -96,7 +96,9 @@
             headers: {
                 account: userStore.account
             },
-            params: [newPsw.value]
+            body: {
+                newPsw: newPsw.value
+            }
         }, 'put').then(json => {
             if(json.status == 200) {
                 alert('已成功修改密碼');
