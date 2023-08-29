@@ -352,7 +352,10 @@ router.get('/ranking', async(req,res) => {   // 顯示排行, query, ＊格式�
     try {
         // 執行查詢
         const [ranksCard] = await promisePool.query(
-            `SELECT ranks, Card_No FROM Ranking WHERE Category_No = "${Category_No}"`
+            `SELECT weight_score, Card_No 
+            FROM Ranking 
+            WHERE Category_No = "${Category_No}"
+            ORDER BY Ranking DESC`
         )
         res.send({status: 200, ranksCard});
     } catch (err) {
