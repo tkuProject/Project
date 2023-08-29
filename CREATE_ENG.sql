@@ -142,13 +142,13 @@ FOREIGN KEY(Card_No) REFERENCES Credit_Card(Card_No)
 
 CREATE TABLE Precautions(
 dNo int not null,
-Precautions_content varchar(750) null,
-important_precautions_content varchar(500) null,
+Precautions_content varchar(750) not null,
+important_precautions_content varchar(500) not null DEFAULT(''),
 PRIMARY KEY (dNo, Precautions_content, important_precautions_content)
 );
 
 CREATE TABLE day_of_the_week(
 uNo int not null,
-the_day date null,
+the_day date not null,
 PRIMARY KEY (uNo, the_day)
 );
