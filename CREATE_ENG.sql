@@ -50,7 +50,6 @@ cumulative_installments_threshold int null ,
 specific_duration_start datetime null,
 specific_duration_end datetime null,
 bank_name varchar(10) null,
-installments_limit int null,
 note varchar(120) null,
 Card_No int not null,
 dNo int not null,
@@ -151,4 +150,10 @@ CREATE TABLE day_of_the_week(
 uNo int not null,
 the_day date not null,
 PRIMARY KEY (uNo, the_day)
+);
+
+CREATE TABLE installments_limit(
+uNo int not null,
+limit_content int not null,
+PRIMARY KEY(uNo, limit_content)
 );
