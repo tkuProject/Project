@@ -1,28 +1,38 @@
 <script setup>
 
-    import { computed, reactive, ref } from 'vue';
+    import { reactive, ref, watch } from 'vue';
+    import { useCardStore } from '../store/CardStore';
     import CardPreview from '../components/CardPreview.vue';
     import sendReq from '../utils/sendReq';
 
+    const cardStore = useCardStore();
+
+    const rankingType = ref(null);
     const typeOpts = reactive(await sendReq('getRankingCate').then(json => {
         if(json.status == 200) {
+            rankingType.value = json.rankingCates[0]?.Category_Name;
             return json.rankingCates;
         }
     }));
-    const rankingType = ref(null);
 
-    const cards = computed(() => {
+    const maxScore = ref(null);
+    const rankList = reactive([]);
+    watch(rankingType, () => {
         sendReq('ranking', {
             query: {
-                Category_No: typeOpts.find(item => item.Category_Name == rankingType.value).Category_No 
+                Category_No: typeOpts.find(item => item.Category_Name == rankingType.value)?.Category_No 
             }
         }).then(json => {
             if(json.status == 200) {
-                return json.ranksCard;
+                maxScore.value = json.ranksCard[0]?.weight_score;
+                json.ranksCard.map(item => {
+                    item.card = cardStore.findCard(item.Card_No);
+                });
+                rankList.length = 0;
+                rankList.push(...json.ranksCard);
             }
         });
-    });
-    const maxScore = cards[0].weight_score;
+    }, { immediate: true });
 
     const barColor = ['rgb(255, 115, 115)', 'rgb(255, 210, 120)', 'rgb(120, 255, 183)', 'rgb(125, 164, 255)'];
     const ranNum = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
@@ -37,16 +47,16 @@
 
     <ul class="rankingGraph">
         <li v-for="(color, index) in barColor">
-            <img v-if="index==1" src="../assets/images/小王冠.png" alt="" class="crown">
-            <CardPreview :card="cards[index-1]"></CardPreview>
-            <div class="chartBar" :style="{ height: cards[index-1].weight_score / (maxScore/200) + 'px', backgroundColor: color }"></div>
+            <img v-if="index==0" src="../assets/images/小王冠.png" alt="" class="crown">
+            <CardPreview :card="rankList[index]?.card"></CardPreview>
+            <div class="chartBar" :style="{ height: rankList[index]?.weight_score / (maxScore/200) + 'px', backgroundColor: color }"></div>
         </li>
     </ul>
 
     <div class="ranking">
         <ul>
-            <li v-for="(card, index) in cards">
-                <CardPreview :card="card" :name-prefix="'第' + ranNum[index] + '名　'" :only-name="true">
+            <li v-for="(rank, index) in rankList">
+                <CardPreview :card="rank.card" :name-prefix="'第' + ranNum[index] + '名　'" :only-name="true">
                 </CardPreview>
             </li>
         </ul>

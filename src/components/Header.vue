@@ -74,7 +74,7 @@
                 alert('註冊成功！');
                 registerAccount.value = '';
                 registerPassword.value = '';
-                registerEmail.value = '';
+                // registerEmail.value = '';
                 registerMode.value.on = false;
             }
             else {
