@@ -39,7 +39,7 @@ router.get('/', async(req,res) => {   //根目錄, 把所有卡片叫出來備�
 
 router.post('/regist', async(req,res) => {   // 註冊, body, 缺少接收使用者寄來之帳密的參數
     console.log('service is running the regist page!')
-    const {account, password, email} = req.body //接果渣丟過來的值
+    const {account, password} = req.body //接果渣丟過來的值, email
     // console.log(req.body)
     try{
         const [rows] = await promisePool.query(
@@ -170,24 +170,24 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
 		FROM Condition_of_Use AS cu
 		NATURAL JOIN discount_description 
 		LEFT JOIN Credit_Card ON cu.Card_No = Credit_Card.Card_No
-		WHERE sNo IN "${platformNos}"
-		AND (                                                           //時間條件
-			(specific_duration_start <="${startDate}"
+		WHERE sNo IN ("${platformNos}")
+		AND (
+			(specific_duration_start <= "${startDate}"
 				AND
-				specific_duration_end >="${startDate}")
+				specific_duration_end >= "${startDate}")
 			OR
-			(specific_duration_start <="${endDate}"
+			(specific_duration_start <= "${endDate}"
 				AND
-				specific_duration_end >="${endDate}")
+				specific_duration_end >= "${endDate}")
 			OR
-			(specific_duration_start >="${startDate}"
+			(specific_duration_start >= "${startDate}"
 				AND
-				specific_duration_end <="${endDate}"))
+				specific_duration_end <= "${endDate}"))
 		`
         if(installment === false) {                                     //分期與否
-			str+= 'AND (Single_consumption_threshold <= "${totalCost}")'
+			str+= `AND (Single_consumption_threshold <= "${totalCost}")`
 		} else{
-			str+= 'AND (cumulative_installments_threshold <= "${totalCost}" OR single_installments_threshold <= "${costPerMonth}")'
+			str+= `AND (cumulative_installments_threshold <= "${totalCost}" OR single_installments_threshold <= "${costPerMonth}")`
 		}
 		let [results] = await promisePool.query(str)                        //查詢語句
 		
@@ -355,7 +355,7 @@ router.get('/ranking', async(req,res) => {   // 顯示排行, query, ＊格式�
             `SELECT weight_score, Card_No 
             FROM Ranking 
             WHERE Category_No = "${Category_No}"
-            ORDER BY Ranking DESC`
+            ORDER BY weight_score DESC`
         )
         res.send({status: 200, ranksCard});
     } catch (err) {
