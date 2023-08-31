@@ -11,7 +11,7 @@ function getDBconfig() {
       port: 3306,
       user: "root",
       password: "",
-      database: "CREATE_ENG", // has to change ot DB's name when DB is ready
+      database: "NEW_CREATE_ENG", // has to change ot DB's name when DB is ready
       connectionLimit: 1,
     };
 }
@@ -168,9 +168,9 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
         // 組成字串、執行查詢
         let str = `SELECT * 
 		FROM Condition_of_Use AS cu
-		NATURAL JOIN discount_description 
-		LEFT JOIN Credit_Card ON cu.Card_No = Credit_Card.Card_No
-		WHERE sNo IN ("${platformNos}")
+		INNER JOIN discount_description
+        ON cu.dNo = discount_description.dNo
+		WHERE sNo IN (${platformNos})
 		AND (
 			(specific_duration_start <= "${startDate}"
 				AND
@@ -184,21 +184,23 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
 				AND
 				specific_duration_end <= "${endDate}"))
 		`
-        if(installment === false) {                                     //分期與否
+        if(installment === false || installment === 'false') {                                     //分期與否
 			str+= `AND (Single_consumption_threshold <= "${totalCost}")`
 		} else{
 			str+= `AND (cumulative_installments_threshold <= "${totalCost}" OR single_installments_threshold <= "${costPerMonth}")`
 		}
+        //console.log()
 		let [results] = await promisePool.query(str)                        //查詢語句
 		
         for(let result of results){
             if(result.Card_No === null){
-                const cardNos = await promisePool.query(
+                const [rows] = await promisePool.query(
                 `SELECT card_No
                 FROM Credit_Card
                 WHERE bank = ?`,
-                [result.bank])
-                result.cardNos = cardNos.map(card => card.Card_No);
+                [result.bank_name])
+                console.log(rows)
+                result.cardNos = rows.map(card => card.card_No);
             }
         }        
         
