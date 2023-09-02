@@ -84,11 +84,10 @@
     };
 
     // 設定
-    const editingPassword = ref(false);
-    // const editingEmail = ref(false);
 
     const settingMode = ref({ on: false });
 
+    const oldPsw = ref('')
     const newPsw = ref('');
 
     const editPassword = () => {
@@ -97,13 +96,15 @@
                 account: userStore.account
             },
             body: {
+                oldPsw: oldPsw.value,
                 newPsw: newPsw.value
             }
         }, 'put').then(json => {
             if(json.status == 200) {
                 alert('已成功修改密碼');
+                oldPsw.value = '';
                 newPsw.value = '';
-                editingPassword.value = false;
+                settingMode.value.on = false;
             } else {
                 alert('未能成功修改密碼');
             }
@@ -137,7 +138,7 @@
                 <ul v-if="avatarHovering" class="profileList">
                     <li class="myCollection"><router-link to="/cards">收藏</router-link></li>
                     <!-- <li class="myNotification"><router-link to="/notification">通知</router-link></li> -->
-                    <li @click="settingMode.on=true" class="settingSwitch">設定</li>
+                    <li @click="settingMode.on=true" class="settingSwitch">設定密碼</li>
                     <hr>
                     <li @click="logout" class="logout">登出</li>
                 </ul>
@@ -184,10 +185,6 @@
                     密碼：<br>
                     <input type="password" v-model="registerPassword" placeholder="請設定您的密碼">
                 </label>
-                <!-- <label>
-                    信箱：（非必填）<br>
-                    <input type="text" v-model="registerEmail" placeholder="請填入您的信箱">
-                </label> -->
                 <button @click="register()" type="button">
                     確認
                 </button>
@@ -196,35 +193,13 @@
     </PopUpBox>
 
     <PopUpBox :show="settingMode">
-        <template #tab>設定</template>
+        <template #tab>設定密碼</template>
         <template #content>
-            <ul class="settingUl">
-                <li class="nickname">
-                    密碼
-                    <template v-if="editingPassword">
-                        <input v-model="newPsw" type="password" placeholder="請輸入新密碼">
-                        <button @click="editingPassword=false" class="cancelBtn">取消</button>
-                        <button @click="editPassword">確認</button>
-                    </template>
-                    <template v-else>
-                        <button @click="editingPassword=true" class="editBtn">編輯</button>
-                    </template>
-                </li>
-                <!-- <li class="email">
-                    信箱
-                    <template v-if="editingEmail">
-                        <input type="text">
-                        <button @click="editingEmail=false" class="cancelBtn">取消</button>
-                        <button @click="editingEmail=false">確認</button>
-                    </template>
-                    <template v-else><span class="userInfo">{{ userStore.email }}</span>
-                        <button @click="editingEmail=true" class="editBtn">編輯</button>
-                    </template>
-                </li>
-                <li class="notificationSetting">
-                    <router-link to="/cards" @click="settingMode.on=false">通知設定 &gt;</router-link>
-                </li> -->
-            </ul>
+            <div class="password">
+                <input v-model="oldPsw" type="password" placeholder="請輸入原密碼">
+                <input v-model="newPsw" type="password" placeholder="請輸入新密碼">
+                <button @click="editPassword">確認</button>
+            </div>
         </template>
     </PopUpBox>        
 
@@ -341,8 +316,8 @@
                     margin: 4px 0;
                     padding: 8px 0;
                     width: 100%;
-                    text-indent: 66px;
-                    background: url('../assets/images/profileSprites.svg') no-repeat 26px;
+                    text-indent: 56px;
+                    background: url('../assets/images/profileSprites.svg') no-repeat 16px;
                     background-size: 20%;
                     cursor: pointer;
                     &:hover {
@@ -404,54 +379,22 @@
             border: 1px solid lightgray;
         }
     }
-
-
-    .settingUl {
-        width: 380px;
-        li {
-            display: flex;
-            align-items: center;
-            position: relative;
-            height: 60px;
-            text-indent: 70px;
-            background: url('../assets/images/settingSprites.svg') no-repeat 16px;
-            background-size: 10%;
-            input {
-                margin-left: 1em;
-            }
-            .userInfo {
-                text-indent: 0;
-            }
-            button {
-                position: absolute;
-                right: 16px;
-                color: gray;
-                border: none;
-                background: none;
-                &:hover {
-                    color: #009DBF;
-                }
-            }
-            .cancelBtn {
-                right: 50px;
-            }
-            a {
-                color: gray;
-                text-decoration: none;
-                &:hover {
-                    color: #009DBF;
-                }
-            }
+    .password {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        input {
+            margin: 10px;
+            margin-left: 1em;
         }
-
-        .nickname {
-            background-position-y: 12px;
-        }
-        .email {
-            background-position-y: -38px;
-        }
-        .notificationSetting {
-            background-position-y: -88px;
+        button {
+            margin-top: 10px;
+            color: gray;
+            border: none;
+            background: none;
+            &:hover {
+                color: #009DBF;
+            }
         }
     }
     

@@ -26,34 +26,34 @@
 
         return props.rankingSrc.reduce((accumulator, item) => {
             for(let tabType of tabMap[props.tab]) {
-                if(item.discount_description?.[tabType]) {
+                if(item?.[tabType]) {
                     item.info = {
                         sortKey: null,
                         date: '',
                         calculation: null,
                         conclusion: null
                     };
-                    if(item.Condition_of_Use?.specific_duration_start) {
-                        item.info.date += dateToShow(item.Condition_of_Use.specific_duration_start);
+                    if(item?.specific_duration_start) {
+                        item.info.date += dateToShow(item.specific_duration_start);
                     }
-                    if(item.Condition_of_Use?.specific_duration_end) {
-                        item.info.date += '~' + dateToShow(item.Condition_of_Use.specific_duration_end);
+                    if(item?.specific_duration_end) {
+                        item.info.date += '~' + dateToShow(item.specific_duration_end);
                     }
                     if(tabType.includes('_Percent')) {
-                        item.info.sortKey = props.totalCost * item.discount_description?.[tabType] / 100;
-                        if(item.discount_description?.Reward_upper_limit && item.info.sortKey > item.discount_description?.Reward_upper_limit) {
-                            item.info.sortKey = item.discount_description.Reward_upper_limit;
+                        item.info.sortKey = props.totalCost * item?.[tabType] / 100;
+                        if(item?.Reward_upper_limit && item.info.sortKey > item?.Reward_upper_limit) {
+                            item.info.sortKey = item.Reward_upper_limit;
                         }
-                        item.info.calculation = `消費金額${ props.totalCost }元 × ${ item.discount_description?.[tabType] }% ↓`;
+                        item.info.calculation = `消費金額${ props.totalCost }元 × ${ item?.[tabType] }% ↓`;
                     } else {
-                        item.info.sortKey = item.discount_description?.[tabType];
+                        item.info.sortKey = item?.[tabType];
                     }
                     item.info.conclusion = `${ props.tab + item.info.sortKey }元`;
                     // 只顯示收藏卡片的篩選
                     if(props.collectionFilter) {
                         // 遍歷當前優惠方案的卡片陣列，用戶有收藏的卡片編號先記下來
                         let cardNos = [];
-                        for(let cardNo of item.cardNos) {
+                        for(let cardNo of item?.cardNos) {
                             if(userStore.collectionCards.includes(cardNo)) {
                                 cardNos.push(cardNo);
                             }
@@ -61,8 +61,7 @@
                         // 卡片陣列有東西的話，再放進排行陣列
                         if(cardNos.length > 0) {
                             accumulator.push({
-                                Condition_of_Use: item.Condition_of_Use,
-                                discount_description: item.discount_description,
+                                Reward_upper_limit: item.Reward_upper_limit,
                                 cardNos,
                                 info: item.info
                             });
@@ -100,15 +99,15 @@
             </td>
             <td class="tdDesc content">
                 <div class="scrollBox">
-                    <div>{{ '網站：' + props.platforms.find(platform => platform.sNo == item.Condition_of_Use?.sNo)?.sName }}</div>
+                    <div>{{ '網站：' + props.platforms.find(platform => platform.sNo == item?.sNo)?.sName }}</div>
                     <div v-if="item.info.date">{{ '日期：' + item.info.date }}</div>
                     <div v-for="conditionName in Object.keys(conditions)">
-                        <template v-if="item.Condition_of_Use?.[conditionName]">
-                            {{ conditions[conditionName] + '：' + item.Condition_of_Use[conditionName] }}
+                        <template v-if="item?.[conditionName]">
+                            {{ conditions[conditionName] + '：' + item[conditionName] }}
                         </template>
                     </div>
-                    <div v-if="item.discount_description?.Reward_upper_limit">
-                        {{ '回饋上限：' + item.discount_description.Reward_upper_limit }}
+                    <div v-if="item?.Reward_upper_limit">
+                        {{ '回饋上限：' + item.Reward_upper_limit }}
                     </div>
                     <div>{{ item.info.calculation }}</div>
                     <div class="conclusion">{{ item.info.conclusion }}</div>
@@ -116,7 +115,7 @@
             </td>
             <td class="tdDesc content">
                 <div class="scrollBox">
-                    {{ item.discount_description.Precautions }}
+                    {{ item.Precautions }}
                 </div>
             </td>
         </tr>

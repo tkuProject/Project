@@ -69,7 +69,7 @@
             rankingSrc.length = 0;
             rankingSrc.push(...await sendReq('compFilter', {
                 query: {
-                    platforms: selectedPlatforms,
+                    platformNos: selectedPlatforms,
                     installment: installment.value,
                     costPerMonth: installment.value ? affordableAmount/12 : null,
                     totalCost: totalCost.value,
