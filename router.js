@@ -99,15 +99,25 @@ router.post('/login', async(req,res) => {   // 登入, body, 用戶收藏的卡�
 
 router.put('/setPsw', async(req,res) => {   // 設定密碼, body
     const {account} = req.headers
-    const {newPsw} = req.body
+    const {oldPsw, newPsw} = req.body
     try {
-        await promisePool.query(
+        const [DBsPsw] = await promisePool.query(
+            `SELECT mPassword FROM member WHERE mAccount = ?`,
+            [account]
+        )
+        console.log(DBsPsw[0].mPassword, oldPsw, newPsw)
+        if(oldPsw === DBsPsw[0].mPassword){
+            await promisePool.query(
             `UPDATE member
             SET mPassword = ?
             WHERE mAccount = ?`,
             [newPsw, account]
         )
-        res.send({status:200})
+            res.send({status:200})
+        }else{
+            res.send({status:401, msg:'wrong password'})
+        }
+
     } catch(err){
         console.error("Error executing query:", err);
         res.send({status:500, resData:{ error: "Internal Server Error" }});
