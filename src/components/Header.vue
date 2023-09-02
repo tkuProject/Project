@@ -143,6 +143,8 @@
             <li v-if="userStore.account" @mouseenter="avatarHovering=true" @mouseleave="avatarHovering=false" class="liForProfile">
                 <button class="profilePic roundBtn"></button>
                 <ul v-if="avatarHovering" class="profileList">
+                    <li class="account">帳號：{{ userStore.account }}</li>
+                    <hr>
                     <li class="myCollection"><router-link to="/cards">收藏</router-link></li>
                     <!-- <li class="myNotification"><router-link to="/notification">通知</router-link></li> -->
                     <li @click="settingMode.on=true" class="settingSwitch">設定密碼</li>
@@ -330,6 +332,16 @@
                     &:hover {
                         color: #009DBF;
                         background-image: url('../assets/images/profileSpritesHover.svg');
+                    }
+                }
+                .account {
+                    text-indent: 0;
+                    text-align: center;
+                    background-image: none;
+                    cursor: auto;
+                    &:hover {
+                        color: black;
+                        background-image: none;
                     }
                 }
                 .myCollection {

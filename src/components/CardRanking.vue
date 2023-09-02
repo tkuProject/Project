@@ -120,6 +120,9 @@
             </td>
         </tr>
     </table>
+    <div v-if="currentRanking.length == 0" class="nothingHint">
+        沒有符合條件的優惠方案
+    </div>
 </template>
 
 <style lang="less" scoped>
