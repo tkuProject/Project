@@ -37,7 +37,6 @@
         if(status == 200) {
             alert('刪除成功！');
         } else {
-            // 這個記得改
             alert('刪除失敗');
         }
         // 刷新userStore的collectionCards
@@ -53,7 +52,6 @@
         if(status == 200) {
             alert('添加成功！');
         } else {
-            // 這個記得改
             alert('添加失敗');
         }
         // 刷新userStore的collectionCards
@@ -120,6 +118,8 @@
                 keyNos.push(...json.cardNos);
                 keywordToShow = keyIn.value;
                 searchingMode.value = true;
+            } else {
+                alert('操作失敗，請檢查網路連線');
             }
         });
     }

@@ -43,11 +43,12 @@
             } else {
                 alert('登入失敗，請檢查帳號密碼是否正確');
             }
-        } else if(status == 400) {
-            // 具體情況再討論
-            if(!loginSucc) {
-                alert('登入失敗，請檢查帳號密碼是否正確');
-            }
+        } else if(status == 401) {
+            alert('密碼不正確，請在確認後重新輸入');
+        } else if(status == 404) {
+            alert('帳號不存在，請在確認後重新輸入');
+        } else {
+            alert('操作失敗，請檢查網路連線');
         }
 
     };
@@ -80,6 +81,10 @@
             else {
                 alert('註冊失敗，請檢查輸入的資料是否符合要求');
             }
+        } else if(status == 400) {
+            alert('此帳號已存在，請修改後再嘗試註冊');
+        } else {
+            alert('操作失敗，請檢查網路連線');
         }
     };
 
@@ -105,8 +110,10 @@
                 oldPsw.value = '';
                 newPsw.value = '';
                 settingMode.value.on = false;
+            } else if(json.status == 401) {
+                alert('密碼不正確，請在確認後重新輸入');
             } else {
-                alert('未能成功修改密碼');
+                alert('操作失敗，請檢查網路連線');
             }
         });
     };
