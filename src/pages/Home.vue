@@ -12,6 +12,15 @@
     // 準備各個購物平台，和一個用來記錄當前選定購物平台的變數
     const platforms = reactive(await sendReq('getPlatform').then(json => {
         if(json.status == 200) {
+            for(let platform of json.platforms) {
+                if(platform.sName == 'Momo') {
+                    platform.unit = 'mo幣';
+                } else if(platform.sName.includes('PChome')) {
+                    platform.unit = 'P幣';
+                } else if(platform.sName.includes('Yahoo')) {
+                    platform.unit = '超贈點';
+                }
+            }
             return json.platforms;
         }
     }));
@@ -71,7 +80,7 @@
                 query: {
                     platformNos: selectedPlatforms,
                     installment: installment.value,
-                    costPerMonth: installment.value ? affordableAmount/12 : null,
+                    costPerMonth: installment.value ? affordableAmount.value/12 : null,
                     totalCost: totalCost.value,
                     startDate: startDate.value,
                     endDate: endDate.value

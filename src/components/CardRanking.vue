@@ -30,8 +30,9 @@
                     item.info = {
                         sortKey: null,
                         date: '',
-                        calculation: null,
-                        conclusion: null
+                        calculation: '',
+                        conclusion: '',
+                        unit: '元'
                     };
                     if(item?.specific_duration_start) {
                         item.info.date += dateToShow(item.specific_duration_start);
@@ -44,11 +45,15 @@
                         if(item?.Reward_upper_limit && item.info.sortKey > item?.Reward_upper_limit) {
                             item.info.sortKey = item.Reward_upper_limit;
                         }
-                        item.info.calculation = `消費金額${ props.totalCost }元 × ${ item?.[tabType] }% ↓`;
+                        item.info.calculation += `消費金額${ props.totalCost }元 × ${ item?.[tabType] }%`;
+                        item.info.conclusion += '→';
                     } else {
                         item.info.sortKey = item?.[tabType];
                     }
-                    item.info.conclusion = `${ props.tab + item.info.sortKey }元`;
+                    if(tabType == 'Shopping_Platform_Reward') {
+                        item.info.unit = props.platforms?.find(platform => platform.sNo == item.sNo).unit;
+                    }
+                    item.info.conclusion += `${ props.tab + '：' + item.info.sortKey + item.info.unit }`;
                     // 只顯示收藏卡片的篩選
                     if(props.collectionFilter) {
                         // 遍歷當前優惠方案的卡片陣列，用戶有收藏的卡片編號先記下來
