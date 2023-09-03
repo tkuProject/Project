@@ -145,11 +145,9 @@
                 <li v-if="searchingMode ? keyNos.includes(card?.Card_No) : true">
                     <CardPreview :card="card">
                         <template #header v-if="userStore.account">
-                            <!-- <button v-if="notiOnCards.includes(card.Card_No)" @click="turnOffNoti(card.Card_No)" class="informBtn" title="關閉通知" :style="{ backgroundImage: `url('` + (infoOffImg) + `')` }">
-                            </button>
-                            <button v-else @click="turnOnNoti(card.Card_No)" class="informBtn" title="開啟通知" :style="{ backgroundImage: `url('` + (infoOnImg) + `')` }">
-                            </button> -->
-                            <button @click="delFromCollection(card.Card_No)" class="addAndDel delFromCollection" title="從您的收藏中刪除">×</button>
+                            <div class="cardHeader">
+                                <button @click="delFromCollection(card.Card_No)" class="addAndDel delFromCollection" title="從您的收藏中刪除">×</button>
+                            </div>
                         </template>
                     </CardPreview>
                 </li>
@@ -167,11 +165,9 @@
             <li v-if="searchingMode ? keyNos.includes(card?.Card_No) : true">
                 <CardPreview :card="card">
                     <template #header v-if="userStore.account">
-                        <!-- <button v-if="notiOnCards?.includes(card.Card_No)" @click="turnOffNoti(card.Card_No)" class="informBtn" title="關閉通知" :style="{ backgroundImage: `url('` + (infoOffImg) + `')` }">
-                        </button>
-                        <button v-else @click="turnOnNoti(card.Card_No)" class="informBtn" title="開啟通知" :style="{ backgroundImage: `url('` + (infoOnImg) + `')` }">
-                        </button> -->
-                        <button @click="addToCollection(card.Card_No)" class="addAndDel addToCollection" title="加入您的收藏">+</button>
+                        <div class="cardHeader">
+                            <button @click="addToCollection(card.Card_No)" class="addAndDel addToCollection" title="加入您的收藏">+</button>
+                        </div>
                     </template>
                 </CardPreview>
             </li>
@@ -245,37 +241,33 @@
         flex-wrap: wrap;
         margin-top: 20px;
         li {
-            margin: 0 15px 0 15px;
+            margin: 15px;
             width: 20%;
-            button {
-                margin-bottom: 16px;
-                width: 20px;
-                height: 20px;
-            }
-            /*
-            .informBtn {
-                background: no-repeat center;
-                background-size: 90%;
-                border: none;
-            }
-            */
-            .addAndDel {
-                float: right;
-                color: gray;
-                background: none;
-                border: 1.5px solid gray;
-                border-radius: 6px;
-            }
-            .delFromCollection {
-                &:hover {
-                    color: white;
-                    background-color: red;
+            .cardHeader {
+                display: flex;
+                justify-content: flex-end;
+                padding: 10px;
+                background-color: rgba(129, 217, 236, .3);
+                button {
+                    width: 20px;
+                    height: 20px;
                 }
-            }
-            .addToCollection {
-                &:hover {
-                    color: white;
-                    background-color: #009DBF;
+                .addAndDel {
+                    color: gray;
+                    border: 1.5px solid gray;
+                    border-radius: 6px;
+                }
+                .delFromCollection {
+                    &:hover {
+                        color: white;
+                        background-color: red;
+                    }
+                }
+                .addToCollection {
+                    &:hover {
+                        color: white;
+                        background-color: #009DBF;
+                    }
                 }
             }
         }

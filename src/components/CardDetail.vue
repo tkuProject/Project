@@ -68,11 +68,11 @@
         display: flex;
         padding: 20px;
         .cardBox {
+            width: 200px;
             .detailCard {
                 display: block;
-                margin: 20px auto;
-                margin-bottom: 0;
-                height: 100px;
+                margin: 0 auto;
+                height: 160px;
             }
             .cardName {
                 text-align: center;

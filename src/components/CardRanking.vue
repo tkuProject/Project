@@ -153,10 +153,8 @@
             width: 30%;
             .scrollBox {
                 display: flex;
-                flex-direction: column;
-                padding: 20px;
-                padding-bottom: 10px;
-                height: 170px;
+                width: 240px;
+                overflow-x: auto;
             }
         }
     
