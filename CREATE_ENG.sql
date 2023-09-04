@@ -37,7 +37,7 @@ Card_Reward int null,
 Card_Reward_Percent FLOAT null,
 Shopping_Platform_Reward int null,
 Reward_upper_limit int  null, 
-note varchar(120) null,
+dNote varchar(120) null,
 PRIMARY KEY (dNo)
 
 );
@@ -50,7 +50,7 @@ cumulative_installments_threshold int null ,
 specific_duration_start datetime null,
 specific_duration_end datetime null,
 bank_name varchar(10) null,
-note varchar(120) null,
+cNote varchar(120) null,
 Card_No int null,
 dNo int not null,
 sNo int not null,
@@ -155,5 +155,6 @@ PRIMARY KEY (uNo, the_day)
 CREATE TABLE installments_limit(
 uNo int not null,
 limit_content int not null,
+
 PRIMARY KEY(uNo, limit_content)
 );
