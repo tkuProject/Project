@@ -41,16 +41,24 @@ input {
   width: 40px;
   height: 40px;
   font-size: 20px;
-  background-color: white;
+  background: url('./assets/images/toTop.svg') no-repeat center;
+  background-size: 100%;
   border: none;
+  transition: .2s;
+  cursor: pointer;
+  &:hover {
+    background-image: url('./assets/images/toTopHover.svg');
+  }
 }
 
 .leftArrow {
   left: 0;
+  transform: rotate(-90deg);
 }
 
 .rightArrow {
   right: 0;
+  transform: rotate(90deg);
 }
 
 .scrollBox {

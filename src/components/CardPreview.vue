@@ -26,6 +26,7 @@
 <style lang="less" scoped>
 
     .fancyCard {
+        width: 100%;
         background-color: white;
         border: 2px solid #81D9EC;
         border-radius: 12px;

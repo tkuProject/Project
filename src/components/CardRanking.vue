@@ -4,6 +4,7 @@
     import { useCardStore } from '../store/cardStore';
     import { useUserStore } from '../store/userStore';
     import CardPreview from './CardPreview.vue';
+    import CardRousel from './CardRousel.vue';
     import { dateToShow } from '../utils/dateFormat';
 
     const props = defineProps(['rankingSrc', 'tab', 'platforms', 'totalCost', 'collectionFilter']);
@@ -89,18 +90,16 @@
     <table>
         <thead>
             <tr>
-                <th class="tdRanking">名次</th>
-                <th class="tdCard">卡片</th>
-                <th class="tdDesc">優惠內容</th>
-                <th class="tdDesc">注意事項</th>
+                <th>名次</th>
+                <th>卡片</th>
+                <th>優惠內容</th>
+                <th>注意事項</th>
             </tr>
         </thead>
         <tr v-for="(item, index) in currentRanking">
             <td class="tdRanking">{{ index + 1 }}</td>
             <td class="tdCard">
-                <div class="scrollBox">
-                    <CardPreview v-for="cardNo in item.cardNos" :card="cardStore.findCard(cardNo)"></CardPreview>
-                </div>
+                <CardRousel :cards="item.cardNos.map(item => cardStore.findCard(item))"></CardRousel>
             </td>
             <td class="tdDesc content">
                 <div class="scrollBox">
@@ -140,6 +139,10 @@
         border: 1px solid gray;
         border-collapse: collapse;
 
+        th {
+            height: 60px;
+        }
+
         th, td {
             font-weight: normal;
             border: 1px solid gray;
@@ -150,12 +153,8 @@
         }
     
         .tdCard {
-            width: 30%;
-            .scrollBox {
-                display: flex;
-                width: 240px;
-                overflow-x: auto;
-            }
+            display: block;
+            width: 240px;
         }
     
         .tdDesc {

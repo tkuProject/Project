@@ -92,7 +92,7 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            width: 18%;
+            width: 20%;
             .chartBar {
                 width: 60px;
                 border-radius: 12px 12px 0 0;
