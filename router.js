@@ -47,9 +47,8 @@ router.post('/regist', async(req,res) => {   // 註冊, body, 缺少接收使用
             [account]
         )
         const accountExists = rows[0].count > 0;
-        let qualified = false
         if(accountExists) {
-            res.send({status:200, qualified: false})// 這裡應該不是200
+            res.send({status:400, qualified: false})
         } else {
             promisePool.query(
                 `insert into member (mAccount, mPassword, email) values ("${account}","${password}", "${email}")`
@@ -86,10 +85,10 @@ router.post('/login', async(req,res) => {   // 登入, body, 用戶收藏的卡�
             if(password === psw){
                 res.send({status:200, loginSucc:true})  //登入成功
             } else {
-                res.send({status:400, loginSucc:false}) //密碼錯誤
+                res.send({status:401, loginSucc:false}) //密碼錯誤
             }
         } else {
-            res.send({status:400, accountExists: false});   //帳號錯誤
+            res.send({status:404, accountExists: false});   //帳號錯誤
         }
     } catch(err){
         console.error("Error executing query:", err);
@@ -115,7 +114,7 @@ router.put('/setPsw', async(req,res) => {   // 設定密碼, body
         )
             res.send({status:200})
         }else{
-            res.send({status:401, msg:'wrong password'})
+            res.send({status:401})
         }
 
     } catch(err){
