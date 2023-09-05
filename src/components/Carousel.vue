@@ -104,6 +104,7 @@
         .list {
             display: flex;
             position: absolute;
+            align-items: center;
             transition: .2s;
         }
         .disabled {
