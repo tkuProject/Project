@@ -51,7 +51,7 @@ router.post('/regist', async(req,res) => {   // 註冊, body, 缺少接收使用
             res.send({status:400, qualified: false})
         } else {
             promisePool.query(
-                `insert into member (mAccount, mPassword, email) values ("${account}","${password}", "${email}")`
+                `insert into member (mAccount, mPassword) values ("${account}","${password}")`
             )
             res.send({status:200, qualified: true})
         }
