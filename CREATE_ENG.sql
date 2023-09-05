@@ -144,7 +144,7 @@ dNo int not null,
 Precautions_content varchar(500) not null,
 important_precautions_content varchar(250) not null DEFAULT(''),
 pNote varchar(200) not null,
-PRIMARY KEY (dNo, Precautions_content, important_precautions_content)
+PRIMARY KEY (dNo, Precautions_content, important_precautions_content, pNote)
 );
 
 CREATE TABLE day_of_the_week(
