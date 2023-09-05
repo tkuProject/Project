@@ -4,7 +4,7 @@
     import { useCardStore } from '../store/cardStore';
     import { useUserStore } from '../store/userStore';
     import CardPreview from './CardPreview.vue';
-    import CardRousel from './CardRousel.vue';
+    import Carousel from './Carousel.vue';
     import { dateToShow } from '../utils/dateFormat';
 
     const props = defineProps(['rankingSrc', 'tab', 'platforms', 'totalCost', 'collectionFilter']);
@@ -58,19 +58,20 @@
                     // 只顯示收藏卡片的篩選
                     if(props.collectionFilter) {
                         // 遍歷當前優惠方案的卡片陣列，用戶有收藏的卡片編號先記下來
-                        let cardNos = [];
+                        let collectCardNos = [];
                         for(let cardNo of item?.cardNos) {
                             if(userStore.collectionCards.includes(cardNo)) {
-                                cardNos.push(cardNo);
+                                collectCardNos.push(cardNo);
                             }
                         }
-                        // 卡片陣列有東西的話，再放進排行陣列
-                        if(cardNos.length > 0) {
-                            accumulator.push({
-                                Reward_upper_limit: item.Reward_upper_limit,
-                                cardNos,
-                                info: item.info
-                            });
+                        // 卡片陣列有東西的話，把所有屬性都抄一份，放進排行陣列
+                        if(collectCardNos.length > 0) {
+                            const card = {};
+                            for(let key of Object.keys(item)) {
+                                card[key] = item[key];
+                            }
+                            card.cardNos = collectCardNos;
+                            accumulator.push(card);
                         }
                     } else {
                         accumulator.push(item);
@@ -99,12 +100,14 @@
         <tr v-for="(item, index) in currentRanking">
             <td class="tdRanking">{{ index + 1 }}</td>
             <td class="tdCard">
-                <CardRousel :cards="item.cardNos.map(item => cardStore.findCard(item))"></CardRousel>
+                <Carousel :re-load-list="props.collectionFilter">
+                    <CardPreview v-for="cardNo in item.cardNos" :card="cardStore.findCard(cardNo)"></CardPreview>
+                </Carousel>
             </td>
             <td class="tdDesc content">
                 <div class="scrollBox">
                     <div>{{ '網站：' + props.platforms.find(platform => platform.sNo == item?.sNo)?.sName }}</div>
-                    <div v-if="item.info.date">{{ '日期：' + item.info.date }}</div>
+                    <div v-if="item.info?.date">{{ '日期：' + item.info?.date }}</div>
                     <div v-for="conditionName in Object.keys(conditions)">
                         <template v-if="item?.[conditionName]">
                             {{ conditions[conditionName] + '：' + item[conditionName] }}
@@ -113,8 +116,9 @@
                     <div v-if="item?.Reward_upper_limit">
                         {{ '回饋上限：' + item.Reward_upper_limit }}
                     </div>
-                    <div>{{ item.info.calculation }}</div>
-                    <div class="conclusion">{{ item.info.conclusion }}</div>
+                    <br>
+                    <div>{{ item.info?.calculation }}</div>
+                    <div class="conclusion">{{ item.info?.conclusion }}</div>
                 </div>
             </td>
             <td class="tdDesc content">
@@ -152,14 +156,9 @@
             width: 10%;
         }
     
-        .tdCard {
-            display: block;
-            width: 240px;
-        }
-    
         .tdDesc {
             padding: 20px;
-            width: 30%;
+            width: 26%;
             .scrollBox {
                 height: 130px;
                 .conclusion {
