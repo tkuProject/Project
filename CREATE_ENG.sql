@@ -143,18 +143,20 @@ CREATE TABLE Precautions(
 dNo int not null,
 Precautions_content varchar(500) not null,
 important_precautions_content varchar(250) not null DEFAULT(''),
+pNote varchar(200) not null,
 PRIMARY KEY (dNo, Precautions_content, important_precautions_content)
 );
 
 CREATE TABLE day_of_the_week(
 uNo int not null,
 the_day date not null,
-PRIMARY KEY (uNo, the_day)
+wNote varchar(200) not null,
+PRIMARY KEY (uNo, the_day, wNote)
 );
 
 CREATE TABLE installments_limit(
 uNo int not null,
 limit_content int not null,
-
-PRIMARY KEY(uNo, limit_content)
+iNote varchar(200) not null,
+PRIMARY KEY(uNo, limit_content, iNote)
 );
