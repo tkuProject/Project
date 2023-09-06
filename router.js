@@ -200,7 +200,6 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
 		}
         //console.log()
 		let [results] = await promisePool.query(str)                        //查詢語句
-		
         for(let result of results){
             if(result.Card_No === null){
                 const [rows] = await promisePool.query(
@@ -208,10 +207,20 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
                 FROM Credit_Card
                 WHERE bank = ?`,
                 [result.bank_name])
-                console.log(rows)
+                //console.log(rows)
                 result.cardNos = rows.map(card => card.card_No);
             }
-        }        
+        }
+        /*
+        for(let uNos of results){
+            const [rows] = await promisePool.query(
+                `SELECT the_day
+                FROM day_of_the_week
+                WHERE uNo = ?`,
+                [results.uNo]
+            )
+        }
+        */
         
         /*
         if (installment === true) {
@@ -262,7 +271,8 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
             )`
         );
     }*/
-        console.log(results)
+        //console.log(str, results)
+        console.log({des: "this is TRING:", str})
         res.send({status: 200, results});
     } catch (err) {
         console.error("Error executing query:", err)
