@@ -181,22 +181,27 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
         ON cu.dNo = discount_description.dNo
 		WHERE sNo IN (${platformNos})
 		AND (
-			(specific_duration_start <= "${startDate}"
+			(cu.specific_duration_start <= "${startDate}"
 				AND
-				specific_duration_end >= "${startDate}")
+				cu.specific_duration_end >= "${startDate}")
 			OR
-			(specific_duration_start <= "${endDate}"
+			(cu.specific_duration_start <= "${endDate}"
 				AND
-				specific_duration_end >= "${endDate}")
+				cu.specific_duration_end >= "${endDate}")
 			OR
-			(specific_duration_start >= "${startDate}"
+			(cu.specific_duration_start >= "${startDate}"
 				AND
-				specific_duration_end <= "${endDate}"))
+				cu.specific_duration_end <= "${endDate}"))
 		`
         if(installment === false || installment === 'false') {                                     //分期與否
-			str+= `AND (Single_consumption_threshold <= "${totalCost}" AND NOT NULL)`
+			str+= `AND (cu.single_consumption_threshold <= "${totalCost}" 
+                AND cu.single_consumption_threshold IS NOT NULL)`
 		} else{
-			str+= `AND (cumulative_installments_threshold <= "${totalCost}" AND NOT NULL OR single_installments_threshold <= "${costPerMonth}" AND NOT NULL)`
+			str+= `AND (cu.cumulative_installments_threshold <= "${totalCost}" 
+                AND cu.cumulative_installments_threshold IS NOT NULL 
+                OR
+                cu.single_installments_threshold <= "${costPerMonth}" 
+                AND cu.single_installments_threshold NOT NULL)`
 		}
         //console.log()
 		let [results] = await promisePool.query(str)                        //查詢語句
