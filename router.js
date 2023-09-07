@@ -194,9 +194,9 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
 				specific_duration_end <= "${endDate}"))
 		`
         if(installment === false || installment === 'false') {                                     //分期與否
-			str+= `AND (Single_consumption_threshold <= "${totalCost}")`
+			str+= `AND (Single_consumption_threshold <= "${totalCost}" AND NOT NULL)`
 		} else{
-			str+= `AND (cumulative_installments_threshold <= "${totalCost}" OR single_installments_threshold <= "${costPerMonth}")`
+			str+= `AND (cumulative_installments_threshold <= "${totalCost}" AND NOT NULL OR single_installments_threshold <= "${costPerMonth}" AND NOT NULL)`
 		}
         //console.log()
 		let [results] = await promisePool.query(str)                        //查詢語句
