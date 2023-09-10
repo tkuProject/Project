@@ -6,13 +6,6 @@ PRIMARY KEY(sNo)
 );
 
 
-CREATE TABLE Points(
-pNo int not null AUTO_INCREMENT,
-pType varchar(7) not null,
-pAmount int null,
-PRIMARY KEY (pNo)
-);
-
 CREATE TABLE Credit_Card(
 Card_No int not null AUTO_INCREMENT,
 bank varchar(6) not null,
@@ -36,6 +29,7 @@ pNo int null,
 Card_Reward int null,
 Card_Reward_Percent FLOAT null,
 Shopping_Platform_Reward int null,
+Shopping_Platform_Reward_Percent FLOAT null,
 Reward_upper_limit int  null, 
 dNote varchar(120) null,
 PRIMARY KEY (dNo)
@@ -50,10 +44,10 @@ cumulative_installments_threshold int null ,
 specific_duration_start datetime null,
 specific_duration_end datetime null,
 bank_name varchar(10) null,
-cNote varchar(120) null,
-Card_No int null,
 dNo int not null,
+Card_No int null,
 sNo int not null,
+cNote varchar(120) null,
 PRIMARY KEY (uNo),
 FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No)  on update cascade,
 FOREIGN KEY (dNo) REFERENCES discount_description(dNo)  on update cascade,
