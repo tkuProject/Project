@@ -89,7 +89,7 @@
                 if(json.status == 200) {
                     return json.results;
                 } else {
-                    alert('操作失敗，請檢查網路連線');
+                    alert('操作失敗，請稍後重試');
                 }
             }));
         }

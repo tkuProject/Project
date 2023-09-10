@@ -42,16 +42,6 @@
                             </p>
                         </li>
                     </template>
-                    <hr>
-                    <li class="note">
-                        <span>注意事項：</span>
-                        <p>
-                            ＊這樣這樣<br>
-                            ＊那樣那樣<br>
-                            ＊如此如此<br>
-                            ＊這般這般
-                        </p>
-                    </li>
                 </ul>
 
             </div>
@@ -107,16 +97,6 @@
                     padding: 20px;
                     text-align: left;
                 }
-            }
-            hr {
-                margin: auto;
-                width: 90%;
-                border: 1px solid lightgray;
-            }
-            .note {
-                margin: 20px;
-                color: gray;
-                text-align: left;
             }
         }
     }

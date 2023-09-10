@@ -42,19 +42,28 @@
                         item.info.date += '~' + dateToShow(item.specific_duration_end);
                     }
                     if(tabType.includes('_Percent')) {
-                        item.info.sortKey = props.totalCost * item?.[tabType] / 100;
+                        item.info.sortKey = props.totalCost * item?.[tabType];
                         if(item?.Reward_upper_limit && item.info.sortKey > item?.Reward_upper_limit) {
                             item.info.sortKey = item.Reward_upper_limit;
                         }
-                        item.info.calculation += `消費金額${ props.totalCost }元 × ${ item?.[tabType] }%`;
+                        item.info.calculation += `消費金額${ props.totalCost }元 × ${ item?.[tabType] }`;
                         item.info.conclusion += '→';
                     } else {
                         item.info.sortKey = item?.[tabType];
                     }
                     if(tabType == 'Shopping_Platform_Reward') {
-                        item.info.unit = props.platforms?.find(platform => platform.sNo == item.sNo).unit;
+                        if(item.dNote?.includes('紅利金')) {
+                            item.info.unit = '紅利金';
+                        } else {
+                            item.info.unit = props.platforms?.find(platform => platform.sNo == item.sNo).unit;
+                        }
                     }
-                    item.info.conclusion += `${ props.tab + '：' + item.info.sortKey + item.info.unit }`;
+                    if(props.tab == '現金折扣' && tabType.includes('_Percent')) {
+                        item.info.conclusion += `${ '折後金額：' + (props.totalCost - props.totalCost * item?.[tabType]) + item.info.unit }
+                        （現折${ item.info.sortKey + item.info.unit }）`;
+                    } else {
+                        item.info.conclusion += `${ props.tab + '：' + item.info.sortKey + item.info.unit }`;
+                    }
                     // 只顯示收藏卡片的篩選
                     if(props.collectionFilter) {
                         // 遍歷當前優惠方案的卡片陣列，用戶有收藏的卡片編號先記下來
@@ -92,7 +101,7 @@
         <thead>
             <tr>
                 <th>名次</th>
-                <th>卡片</th>
+                <th>相關卡片</th>
                 <th>優惠內容</th>
                 <th>注意事項</th>
             </tr>
@@ -107,7 +116,9 @@
             <td class="tdDesc content">
                 <div class="scrollBox">
                     <div>{{ '網站：' + props.platforms.find(platform => platform.sNo == item?.sNo)?.sName }}</div>
-                    <div v-if="item.info?.date">{{ '日期：' + item.info?.date }}</div>
+                    <div v-if="item.info?.date">日期：</div>
+                    <div v-if="item.info?.date">{{ item.info?.date }}</div>
+                    <span v-if="item.thoseDays">之間的{{ item.thoseDays.map(date => dateToShow(date)).join('、') }}</span>
                     <div v-for="conditionName in Object.keys(conditions)">
                         <template v-if="item?.[conditionName]">
                             {{ conditions[conditionName] + '：' + item[conditionName] }}
@@ -160,7 +171,6 @@
             padding: 20px;
             width: 26%;
             .scrollBox {
-                height: 130px;
                 .conclusion {
                     color: #009DBF;
                 }
