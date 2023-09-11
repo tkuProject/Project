@@ -24,11 +24,11 @@ PRIMARY KEY(Card_No)
 CREATE TABLE discount_description(
 dNo int not null AUTO_INCREMENT,
 Cash_Discount int null,
-Cash_Discount_Percent FLOAT null,
+Cash_Discount_Percent DECIMAL(3,2) null,
 Card_Reward int null,
-Card_Reward_Percent FLOAT null,
+Card_Reward_Percent DECIMAL(3,2) null,
 Shopping_Platform_Reward int null,
-Shopping_Platform_Reward_Percent FLOAT null,
+Shopping_Platform_Reward_Percent DECIMAL(3,2) null,
 Reward_upper_limit int  null, 
 dNote varchar(120) null,
 PRIMARY KEY (dNo)
@@ -84,7 +84,7 @@ PRIMARY KEY (Category_No)
 CREATE TABLE Ranking(
 Card_No int not null ,
 Category_No int not null,
-weight_score float null,
+weight_score DECIMAL(4,2) null,
 PRIMARY KEY (Card_No, Category_No),
 FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on update cascade,
 FOREIGN KEY (Category_No) REFERENCES Charts(Category_No) on update cascade
