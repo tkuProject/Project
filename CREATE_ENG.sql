@@ -43,12 +43,12 @@ cumulative_installments_threshold int null ,
 specific_duration_start datetime null,
 specific_duration_end datetime null,
 bank_name varchar(10) null,
+dCard_issuer varchar(20) null,
 dNo int not null,
 Card_No int null,
 sNo int not null,
 cNote varchar(120) null,
 PRIMARY KEY (uNo),
-FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No)  on update cascade,
 FOREIGN KEY (dNo) REFERENCES discount_description(dNo)  on update cascade,
 FOREIGN KEY (sNo) REFERENCES Shopping_Platform(sNo) on update cascade
 );
@@ -56,10 +56,8 @@ FOREIGN KEY (sNo) REFERENCES Shopping_Platform(sNo) on update cascade
 
 CREATE TABLE `include`(
 dNo int not null,
-pNo int not null,
-PRIMARY KEY (dNo, pNo),
-FOREIGN KEY (dNo) REFERENCES discount_description(dNo) on update cascade,
-FOREIGN KEY (pNo) REFERENCES Points(pNo) on update cascade
+PRIMARY KEY (dNo),
+FOREIGN KEY (dNo) REFERENCES discount_description(dNo) on update cascade
 );
 
 CREATE TABLE `member`(
@@ -153,3 +151,4 @@ limit_content int not null,
 iNote varchar(200) not null,
 PRIMARY KEY(uNo, limit_content, iNote)
 );
+
