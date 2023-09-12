@@ -25,7 +25,7 @@
     // 根據現在選取的標籤做出排名
     const currentRanking = computed(() => {
 
-        return props.rankingSrc.reduce((accumulator, item) => {
+        const ranking = props.rankingSrc.reduce((accumulator, item) => {
             for(let tabType of tabMap[props.tab]) {
                 if(item?.[tabType]) {
                     item.info = {
@@ -91,6 +91,17 @@
         }, []).sort((a, b) => {
             return b.info?.sortKey - a.info?.sortKey;
         });
+
+        const cumulInstArr = ranking.filter(item => {
+            return item.cumulative_installments_threshold && item.cumulative_installments_threshold > props.totalCost;
+        });
+
+        for(item in cumulInstArr) {
+            ranking.splice(ranking.indexOf(item), 1);
+            ranking.push(item);
+        }
+
+        return ranking;
         
     });
 
