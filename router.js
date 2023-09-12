@@ -172,7 +172,7 @@ router.get('/getPlatform', async(req,res) => {   // 顯示購物平台, query, �
 })
 
 router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{優惠方案（object）, 卡片編號},　… ]
-    const {platformNos, installment, costPerMonth, totalCost, startDate, endDate} = req.query
+    const {platformNos, installment, totalCost, startDate, endDate} = req.query
     try {
         // 組成字串、執行查詢
         let str = `SELECT * 
@@ -197,11 +197,10 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
 			str+= `AND (cu.single_consumption_threshold <= "${totalCost}" 
                 AND cu.single_consumption_threshold IS NOT NULL)`
 		} else{
-			str+= `AND (cu.cumulative_installments_threshold <= "${totalCost}" 
-                AND cu.cumulative_installments_threshold IS NOT NULL 
+			str+= `AND (cu.cumulative_installments_threshold IS NOT NULL 
                 OR
-                cu.single_installments_threshold <= "${costPerMonth}" 
-                AND cu.single_installments_threshold NOT NULL)`
+                cu.single_installments_threshold <= "${totalCost}" 
+                AND cu.single_installments_threshold IS NOT NULL)`
 		}
         //console.log()
 		let [results] = await promisePool.query(str)                        //查詢語句
