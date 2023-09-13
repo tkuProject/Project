@@ -47,7 +47,6 @@
 
     // 記錄使用者在表單輸入的值
     const installment = ref(false);
-    const affordableAmount = ref(null);
     const totalCost = ref(null);
     // 記錄開始日期與結束日期
     const now = new Date();
@@ -72,15 +71,12 @@
     const startCompare = async () => {
         if(!totalCost.value) {
             alert('要先輸入消費總額才能開始比較喔～');
-        } else if (installment.value && !affordableAmount.value) {
-            alert('分期付款的情況需要輸入一年願意負擔的金額喔～');
         } else {
             rankingSrc.length = 0;
             rankingSrc.push(...await sendReq('compFilter', {
                 query: {
                     platformNos: selectedPlatforms,
                     installment: installment.value,
-                    costPerMonth: installment.value ? affordableAmount.value/12 : null,
                     totalCost: totalCost.value,
                     startDate: startDate.value,
                     endDate: endDate.value
@@ -133,11 +129,6 @@
                     無分期
                 </label>
             </div>
-        </li>
-        
-        <li v-if="installment" class="affordableAmount">
-            <span class="condition conditionTitle">一年願意負擔的金額</span>
-            <input v-model="affordableAmount" type="number" class="condition conditionField" placeholder="請輸入一年願意負擔的金額">
         </li>
         
         <li>
@@ -258,12 +249,6 @@
 
             .conditionField {
                 width: 70%;
-            }
-        }
-
-        .affordableAmount {
-            span, input {
-                background-color: rgba(207, 246, 255, .5);
             }
         }
 

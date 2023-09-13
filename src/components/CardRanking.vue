@@ -58,9 +58,12 @@
                             item.info.unit = props.platforms?.find(platform => platform.sNo == item.sNo).unit;
                         }
                     }
+                    if(tabType.includes('Card_Reward') && item.dNote?.includes('小樹點')) {
+                        item.info.unit = '小樹點';
+                    }
                     if(props.tab == '現金折扣' && tabType.includes('_Percent')) {
                         item.info.conclusion += `${ '折後金額：' + (props.totalCost - props.totalCost * item?.[tabType]) + item.info.unit }
-                        （現折${ item.info.sortKey + item.info.unit }）`;
+                        （${ props.tab + '：' + item.info.sortKey + item.info.unit }）`;
                     } else {
                         item.info.conclusion += `${ props.tab + '：' + item.info.sortKey + item.info.unit }`;
                     }
