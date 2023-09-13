@@ -45,7 +45,6 @@ specific_duration_end datetime null,
 bank_name varchar(10) null,
 dCard_issuer varchar(20) null,
 dNo int not null,
-Card_No int null,
 sNo int not null,
 cNote varchar(120) null,
 PRIMARY KEY (uNo),
@@ -152,3 +151,10 @@ iNote varchar(200) not null,
 PRIMARY KEY(uNo, limit_content, iNote)
 );
 
+CREATE TABLE Condidtion_Card_Nos(
+uNo int not null, 
+Card_No int not null,
+PRIMARY KEY (uNo, Card_No),
+Foreign Key (uNo)  REFERENCES Condition_of_Use(uNo),
+Foreign Key (Card_No) REFERENCES Credit_Card(Card_No)
+);
