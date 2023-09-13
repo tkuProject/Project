@@ -1,12 +1,10 @@
 <script setup>
 
     import { computed, reactive, ref } from 'vue';
-    import { useCardStore } from '../store/CardStore';
+    import { useCardStore } from '../store/cardStore';
     import { useUserStore } from '../store/userStore';
     import sendReq from '../utils/sendReq';
     import CardPreview from '../components/CardPreview.vue';
-    // import infoOnImg from '../assets/images/小鈴鐺.svg';
-    // import infoOffImg from '../assets/images/小鈴鐺關閉.svg';
 
     const cardStore = useCardStore();
     const userStore = useUserStore();
@@ -58,51 +56,6 @@
         await userStore.getCollectionCards();
     };
 
-    /*
-    const notiOnCards = reactive([]);
-    const getNotiOnCards = async () => {
-        await sendReq('notiCards', {
-            headers: {
-                account: userStore.account
-            }
-        }).then(json => {
-            if(json.status == 200) {
-                notiOnCards.length = 0;
-                notiOnCards.push(...json.cardNo);
-            }
-        })
-    };
-    getNotiOnCards();
-
-    const turnOnNoti = async cardNo => {
-        await sendReq('notiOn', {
-            headers: { account: userStore.account },
-            body: { Card_No: cardNo }
-        }, 'post').then(json => {
-            if(json.status == 200) {
-                alert('成功開啟通知！');
-            } else {
-                alert('未能成功開啟通知');
-            }
-        });
-        getNotiOnCards();
-    };
-
-    const turnOffNoti = async cardNo => {
-        await sendReq('notiOff', {
-            headers: { account: userStore.account },
-            params: [cardNo]
-        }, 'delete').then(json => {
-            if(json.status == 200) {
-                alert('成功關閉通知！');
-            } else {
-                alert('未能成功關閉通知');
-            }
-        });
-        getNotiOnCards();
-    };
-    */
-
     const searchingMode = ref(false);
     const keyIn = ref('');
     let keywordToShow;
@@ -115,6 +68,12 @@
         }).then(json => {
             if(json.status == 200) {
                 keyNos.length = 0;
+                keyNos.push(...cardStore.allCards.reduce((res, card) => {
+                    if(card.discount_information?.includes(keyIn.value)) {
+                        res.push(card.Card_No);
+                    }
+                    return res;
+                }, []));
                 keyNos.push(...json.cardNos);
                 keywordToShow = keyIn.value;
                 searchingMode.value = true;
