@@ -151,7 +151,7 @@ iNote varchar(200) not null,
 PRIMARY KEY(uNo, limit_content, iNote)
 );
 
-CREATE TABLE Condidtion_Card_Nos(
+CREATE TABLE Condition_Card_Nos(
 uNo int not null, 
 Card_No int not null,
 PRIMARY KEY (uNo, Card_No),
