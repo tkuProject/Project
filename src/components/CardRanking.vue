@@ -148,7 +148,8 @@
             </td>
             <td class="tdDesc content">
                 <div class="scrollBox">
-                    {{ item.Precautions }}
+                    <span class="imPrecautions">{{ item.Precautions?.important_precautions_content }}</span>
+                    {{ item.Precautions?.Precautions_content }}
                 </div>
             </td>
         </tr>
@@ -187,6 +188,9 @@
             .scrollBox {
                 .conclusion {
                     color: #009DBF;
+                }
+                .imPrecautions {
+                    color: red;
                 }
             }
         }
