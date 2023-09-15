@@ -91,7 +91,7 @@
         <input v-model="keyIn" type="search" placeholder="請輸入感興趣的卡片關鍵字">
         <button @click="search" class="searchBtn" type="button"></button>
     </div>
-    <button @click="searchingMode = false" v-if="searchingMode" class="goBack">返回</button>
+    <button @click="searchingMode = false" v-if="searchingMode" class="goBack">返回總覽</button>
 
     <div v-if="searchingMode" class="searchHint">
         與 {{ keywordToShow }} 相關的卡片：
@@ -171,12 +171,12 @@
     .goBack {
         position: absolute;
         top: 80px;
-        width: 80px;
+        width: 100px;
         height: 40px;
         text-align: right;
         font-size: 20px;
         background: url(../assets/images/goBack.svg) no-repeat center left;
-        background-size: 30%;
+        background-size: 16%;
         border: none;
         &:hover {
             color: #009DBF;
