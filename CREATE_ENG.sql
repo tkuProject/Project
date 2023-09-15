@@ -121,14 +121,6 @@ FOREIGN KEY (mAccount) REFERENCES member(mAccount),
 FOREIGN KEY (nNo) REFERENCES Notification(nNo)
 );
 
-CREATE TABLE opening_notification( 
-mAccount varchar(24) not null,     
-Card_No int not null,              
-PRIMARY KEY (mAccount, Card_No),
-FOREIGN KEY(mAccount) REFERENCES member(mAccount),
-FOREIGN KEY(Card_No) REFERENCES Credit_Card(Card_No)
-);
-
 CREATE TABLE Precautions(
 dNo int not null,
 Precautions_content varchar(500) not null,
