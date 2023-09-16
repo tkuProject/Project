@@ -103,15 +103,6 @@ FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on update cascade,
 FOREIGN KEY (kNo) REFERENCES Keyword(kNo) on update cascade
 );
 
-CREATE TABLE `Notification`(
-nNo int not null AUTO_INCREMENT,
-nLink varchar(50) not null,
-nDate DATE not null,
-Card_No int not null,
-PRIMARY KEY (nNo),
-FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No)
-);
-
 CREATE TABLE collecting_notification(
 mAccount varchar(24) not null,
 nNo int not null,
