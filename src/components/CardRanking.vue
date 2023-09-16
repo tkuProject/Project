@@ -148,8 +148,8 @@
             </td>
             <td class="tdDesc content">
                 <div class="scrollBox">
-                    <span class="imPrecautions">{{ item.Precautions?.important_precautions_content }}</span>
-                    {{ item.Precautions?.Precautions_content }}
+                    <span class="imPrecautions">{{ item.important_precautions_content }}</span>
+                    {{ item.Precautions_content }}
                 </div>
             </td>
         </tr>
