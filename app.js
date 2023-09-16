@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  origin: ['http://localhost:5173'], //這裡放果渣的前端網址
+  origin: ['http://localhost:5173', 'http://104.155.220.16'], //這裡放前端網址
   methods: 'GET,HEAD,PUT,POST,DELETE,OPTIONS',
   allowedHeaders: ['Access-Control-Allow-Headers', 'Content-Type', 'account']
 }));

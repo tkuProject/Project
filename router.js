@@ -38,7 +38,7 @@ router.get('/', async(req,res) => {   //根目錄, 把所有卡片叫出來備�
 
 router.post('/regist', async(req,res) => {   // 註冊, body, 缺少接收使用者寄來之帳密的參數
     console.log('service is running the regist page!')
-    const {account, password} = req.body //接果渣丟過來的值, email
+    const {account, password} = req.body //接前端丟過來的值, email
     // console.log(req.body)
     try{
         const [rows] = await promisePool.query(
@@ -162,7 +162,6 @@ router.get('/getPlatform', async(req,res) => {   // 顯示購物平台, query, �
         const [platforms] = await promisePool.query(
             "SELECT * FROM Shopping_Platform"
         );
-        console.log(platforms);
         res.send({status: 200, platforms })
     } catch (err) {
         console.error("Error executing query:", err)
@@ -202,7 +201,7 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
                 cu.single_installments_threshold <= "${totalCost}" 
                 AND cu.single_installments_threshold IS NOT NULL)`
 		}
-        //console.log()
+        console.log(str);
 		let [results] = await promisePool.query(str)                        //查詢語句
         
         for(let result of results){
