@@ -11,7 +11,7 @@ function getDBconfig() {
       port: 3306,
       user: "root",
       password: "",
-      database: "NEW_CREATE_ENG", // has to change ot DB's name when DB is ready
+      database: "aaa", // has to change ot DB's name when DB is ready
       connectionLimit: 1,
     };
 }
@@ -29,7 +29,6 @@ router.get('/', async(req,res) => {   //根目錄, 把所有卡片叫出來備�
         const [rows] = await promisePool.query(
             "SELECT * FROM Credit_Card"
         );
-        console.log(rows);
         res.send({ status:200, allCards:rows});
     } catch (err) {
         console.error("Error executing query:", err);
@@ -177,9 +176,10 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
         // 組成字串、執行查詢
         let str = `SELECT * 
 		FROM Condition_of_Use AS cu
-		INNER JOIN discount_description
-        ON cu.dNo = discount_description.dNo
-		WHERE sNo IN (${platformNos})
+		INNER JOIN discount_description AS dd
+            ON cu.dNo = dd.dNo
+        INNER JOIN Precautions
+		WHERE cu.sNo IN (${platformNos})
 		AND (
 			(cu.specific_duration_start <= "${startDate}"
 				AND
@@ -204,79 +204,34 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
 		}
         //console.log()
 		let [results] = await promisePool.query(str)                        //查詢語句
+        
         for(let result of results){
-            if(result.Card_No === null){
-                const [rows] = await promisePool.query(
-                `SELECT card_No
-                FROM Credit_Card
-                WHERE bank = ?`,
-                [result.bank_name])
-                //console.log(rows)
-                result.cardNos = rows.map(card => card.card_No);
-            }
-        }
-        /*
-        for(let uNos of results){
-            const [rows] = await promisePool.query(
+            // 特定周幾
+            const [thoseDays] = await promisePool.query(
                 `SELECT the_day
                 FROM day_of_the_week
                 WHERE uNo = ?`,
-                [results.uNo]
+                [result.uNo]
             )
-        }
-        */
-        
-        /*
-        if (installment === true) {
-            filter = await promisePool.query(
-                `SELECT * 
-                FROM Condition_of_Use AS cu
-                INNER JOIN discount_description AS dd ON cu.dNO = dd.dNo
-                LEFT JOIN credit_card AS cc ON cu.Card_No = cc.Card_No
-                WHERE 
-                sNo IN (${platformNos})
-                AND (
-                    (cumulative_installments_threshold <= "${totalCost}" 
-                        AND specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
-                    )
-                    OR(
-                        specific_duration_end BETWEEN "${startDate}" AND "${endDate}"
-                    )
-                    OR(
-                        single_installments_threshold <= "${costPerMonth}" 
-        				AND specific_duration_start BETWEEN "${startDate}" AND "${endDate}"
-                    )
-                    OR(
-                        specific_duration_end BETWEEN "${startDate}" AND "${endDate}"
-                    )
+            result.thoseDays = thoseDays.map(item =>item.the_day)
+            const conCardNos = await promisePool.query(
+                `SELECT Card_No
+                FROM Condition_Card_Nos
+                WHERE uNo = ${ result.uNo }`
+            )
+            if(conCardNos[0].length>0) {
+                result.cardNos = conCardNos[0].map(item =>item.Card_No)
+            } else {
+                const [rows] = await promisePool.query(
+                    `SELECT card_No
+                    FROM Credit_Card
+                    WHERE bank = ?`,
+                    [result.bank_name]
                 )
-                OR (
-                    cu.Card_No IS NULL
-                    AND cc.bank = cu.bank_name
-                )`
-            );
-        } else if (installment === false) {
-        filter = await promisePool.query(
-            `SELECT * 
-            FROM Condition_of_Use AS cu
-            INNER JOIN discount_description AS dd ON cu.dNO = dd.dNo
-            LEFT JOIN credit_card AS cc ON cu.Card_No = cc.Card_No
-            WHERE 
-            sNo IN (${platformNos})
-            AND (
-    				(Single_consumption_threshold <= "${totalCost}" 
-    				AND specific_duration_start BETWEEN "${startDate}" AND "${endDate}")
-                OR 
-                (specific_duration_end BETWEEN "${startDate}" AND "${endDate}")
-            )
-            OR (
-                cu.Card_No IS NULL
-                AND cc.bank = cu.bank_name
-            )`
-        );
-    }*/
-        //console.log(str, results)
-        console.log({des: "this is TRING:", str})
+                result.cardNos = rows.map(card => card.card_No);
+            }
+        }
+        console.log(results)
         res.send({status: 200, results});
     } catch (err) {
         console.error("Error executing query:", err)
