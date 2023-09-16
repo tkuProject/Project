@@ -1,0 +1,86 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #FFF7CE;
+}
+
+li {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  color: gray;
+  border: 1px solid gray;
+  border-radius: 12px;
+  background-color: white;
+  transition: .2s;
+  &:hover {
+      color: white;
+      background-color: #009DBF;
+  }
+}
+
+input {
+  text-indent: 2px;
+}
+
+.container {
+  position: relative;
+  margin: 50px auto;
+  margin-bottom: 0;
+  padding: 80px 0;
+  width: 800px;
+}
+
+.arrow {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  background: url('./assets/images/toTop.svg') no-repeat center;
+  background-size: 100%;
+  border: none;
+  transition: .2s;
+  cursor: pointer;
+  &:hover {
+    background-image: url('./assets/images/toTopHover.svg');
+  }
+}
+
+.leftArrow {
+  left: 0;
+  transform: rotate(-90deg);
+}
+
+.rightArrow {
+  right: 0;
+  transform: rotate(90deg);
+}
+
+.scrollBox {
+  overflow-y: auto;
+}
+.scrollBox::-webkit-scrollbar {
+  width: 10px;
+  background-color: rgba(211, 211, 211, .5);
+  border-radius: 5px;
+}
+.scrollBox::-webkit-scrollbar-thumb {
+  background-color: #81D9EC;
+  border: 1px solid #009DBF;
+  border-radius: 5px;
+}
+.scrollBox::-webkit-scrollbar-thumb:active {
+  background-color: #009DBF;
+}
+
+.nothingHint {
+  margin: 40px auto;
+  text-align: center;
+  font-size: 30px;
+  color: gray;
+}
