@@ -132,7 +132,7 @@
                     <div>{{ '網站：' + props.platforms.find(platform => platform.sNo == item?.sNo)?.sName }}</div>
                     <div v-if="item.info?.date">日期：</div>
                     <div v-if="item.info?.date">{{ item.info?.date }}</div>
-                    <span v-if="item.thoseDays">之間的{{ item.thoseDays.map(date => dateToShow(date)).join('、') }}</span>
+                    <span v-if="item.thoseDays.length > 0">之間的{{ item.thoseDays.map(date => dateToShow(date)).join('、') }}</span>
                     <div v-for="conditionName in Object.keys(conditions)">
                         <template v-if="item?.[conditionName]">
                             {{ conditions[conditionName] + '：' + item[conditionName] }}
