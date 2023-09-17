@@ -22,7 +22,7 @@
         listItems = Array.from(listEl.value.children);
         listItemMargin = (windowEl.value.parentNode.clientWidth - listItems[0].offsetWidth)/2;
 
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 200));
 
         listItems.forEach(item => {
             item.style.margin = '0 ' + listItemMargin + 'px';
@@ -104,7 +104,6 @@
         .list {
             display: flex;
             position: absolute;
-            align-items: center;
             transition: .2s;
         }
         .disabled {

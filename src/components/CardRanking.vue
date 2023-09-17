@@ -26,10 +26,11 @@
     // 根據現在選取的標籤做出排名
     const currentRanking = computed(() => {
 
+        console.log(props.rankingSrc.length);
+
         const ranking = props.rankingSrc.reduce((accumulator, item) => {
             for(let tabType of tabMap[props.tab]) {
                 if(item?.[tabType] && parseInt(item?.[tabType]) > 0) {
-                    console.log();
                     item.info = {
                         sortKey: null,
                         date: '',
@@ -106,6 +107,7 @@
             ranking.push(item);
         }
 
+        console.log(ranking.length);
         return ranking;
         
     });
@@ -126,7 +128,9 @@
             <td class="tdRanking">{{ index + 1 }}</td>
             <td class="tdCard">
                 <Carousel :re-load-list="props.collectionFilter">
-                    <CardPreview v-for="cardNo in item.cardNos" :card="cardStore.findCard(cardNo)"></CardPreview>
+                    <div v-for="cardNo in item.cardNos" class="cardBox">
+                        <CardPreview :card="cardStore.findCard(cardNo)"></CardPreview>
+                    </div>
                 </Carousel>
             </td>
             <td class="tdDesc content">
@@ -186,11 +190,20 @@
         .tdRanking {
             width: 10%;
         }
+
+        .tdCard {
+            .cardBox {
+                width: 160px;
+                height: 160px;
+            }
+        }
     
         .tdDesc {
             padding: 20px;
             width: 26%;
             .scrollBox {
+                max-width: 240px;
+                height: 180px;
                 .conclusion {
                     color: #009DBF;
                 }
@@ -201,6 +214,7 @@
         }
         .content {
             text-align: left;
+            word-wrap: break-word;
         }
     
     }
