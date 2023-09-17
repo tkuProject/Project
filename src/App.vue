@@ -11,6 +11,7 @@
   onBeforeMount(async () => {
     // 請求所有卡片
     await cardStore.getCards();
+    console.log(cardStore.allCards);
     // 確認是否已有登入
     const account = localStorage.getItem('account');
     if(account) {

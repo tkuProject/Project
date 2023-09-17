@@ -20,6 +20,7 @@
     const conditions = {
         single_consumption_threshold: '單筆消費門檻',
         single_installments_threshold: '單筆分期門檻',
+        cumulative_installments_threshold: '累積分期門檻'
     };
 
     // 根據現在選取的標籤做出排名
@@ -133,11 +134,6 @@
                     <div v-if="item.info?.date">日期：</div>
                     <div v-if="item.info?.date">{{ item.info?.date }}</div>
                     <span v-if="item.thoseDays?.length > 0">之間的{{ item.thoseDays.map(date => dateToShow(date)).join('、') }}</span>
-                    <div v-for="conditionName in Object.keys(conditions)">
-                        <template v-if="item?.[conditionName]">
-                            {{ conditions[conditionName] + '：' + item[conditionName] }}
-                        </template>
-                    </div>
                     <div v-if="item?.Reward_upper_limit">
                         {{ '回饋上限：' + item.Reward_upper_limit }}
                     </div>
@@ -148,6 +144,14 @@
             </td>
             <td class="tdDesc content">
                 <div class="scrollBox">
+                    <div v-for="conditionName in Object.keys(conditions)">
+                        <template v-if="item?.[conditionName]">
+                            {{ conditions[conditionName] + '：' + item[conditionName] }}
+                            <template v-if="conditions[conditionName] == '累積分期門檻'">
+                                （本月累積分期金額達{{ item[conditionName] }}元即可享有此優惠）
+                            </template>
+                        </template>
+                    </div>
                     <span class="imPrecautions">{{ item.important_precautions_content }}</span>
                     {{ item.Precautions_content }}
                 </div>
