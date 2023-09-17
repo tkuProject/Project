@@ -100,7 +100,7 @@
             return item.cumulative_installments_threshold && item.cumulative_installments_threshold > props.totalCost;
         });
 
-        for(item in cumulInstArr) {
+        for(let item of cumulInstArr) {
             ranking.splice(ranking.indexOf(item), 1);
             ranking.push(item);
         }
