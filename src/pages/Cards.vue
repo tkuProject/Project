@@ -111,7 +111,7 @@
                     </CardPreview>
                 </li>
             </template>
-            <div v-if="collectionCards.length==0" class="nothingHint">目前沒有收藏卡片喔～</div>
+            <div v-if="!searchingMode && collectionCards.length==0" class="nothingHint">目前沒有收藏卡片喔～</div>
             <div v-if="searchingMode && !collectionCards.some(item => keyNos.includes(item.Card_No))" class="nothingHint">沒有相關的卡片</div>
         </ul>
         <div v-else>讀取中</div>
