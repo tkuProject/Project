@@ -309,20 +309,30 @@ router.delete('/delCollection/:Card_No', async(req,res) => {   // 把卡片從�
 })
 
 router.get('/searchCards', async(req,res) =>{//銀行 卡 關鍵字 優惠資訊(前)
+
     const keyIn = req.query.keyIn
+    /* SELECT DISTINCT card_no
+            FROM Credit_Card
+            WHERE Card_Name LIKE '%${keyIn}%';
+
+SELECT DISTINCT conform.Card_No
+            FROM conform
+            NATURAL JOIN keyword
+            WHERE keyword.kName LIKE '%${keyIn}%';
+SELECT DISTINCT Card_No     
+            FROM Credit_Card
+            WHERE bank LIKE '%${keyIn}%';*/
+    let str = `SELECT DISTINCT conform.Card_No, Credit_Card.Card_No
+    FROM conform 
+    NATURAL JOIN Keyword
+    NATURAL JOIN Credit_Card
+    WHERE Keyword.kName LIKE '%${keyIn}%'
+    OR Credit_Card.bank LIKE '%${keyIn}%'
+    OR Credit_Card.Card_Name LIKE '%${keyIn}%'`
     try{
-        const CardArr = await promisePool.query(
-            `SELECT DISTINCT conform.Card_No, Credit_Card.Card_No
-            FROM conform 
-            NATURAL JOIN Keyword
-            NATURAL JOIN Credit_Card
-            WHERE Keyword.kName LIKE ?
-            OR Credit_Card.bank LIKE ?
-            OR Credit_Card.Card_Name LIKE ?`,
-            [`%${keyIn}%`, `%${keyIn}%`, `%${keyIn}%`]
-        )
-        console.log("123")
-        console.log(CardArr)
+        const CardArr = await promisePool.query(str)
+        console.log('str: ', str)
+        console.log('CardArr: ', CardArr)
         const cardNos = CardArr[0].map(item => item.Card_No)
         res.send({status: 200, cardNos})
     } catch (err) {
