@@ -60,7 +60,7 @@
         } else if(leftArrowEl.value.classList.contains('disabled')) {
             leftArrowEl.value.classList.remove('disabled');
         }
-        if(currentIndex.value == listItems.length - 1) {
+        if(currentIndex.value == listItems.length - 1 || listItems.length == 0) {
             rightArrowEl.value.classList.add('disabled');
         } else if(currentIndex.value > listItems.length - 1) {
             currentIndex.value = listItems.length - 1;

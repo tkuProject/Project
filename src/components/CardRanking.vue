@@ -26,8 +26,6 @@
     // 根據現在選取的標籤做出排名
     const currentRanking = computed(() => {
 
-        console.log(props.rankingSrc.length);
-
         const ranking = props.rankingSrc.reduce((accumulator, item) => {
             for(let tabType of tabMap[props.tab]) {
                 if(item?.[tabType] && parseInt(item?.[tabType]) > 0) {
@@ -54,7 +52,7 @@
                     } else {
                         item.info.sortKey = item?.[tabType];
                     }
-                    if(tabType == 'Shopping_Platform_Reward') {
+                    if(tabType.includes('Shopping_Platform_Reward')) {
                         if(item.dNote?.includes('紅利金')) {
                             item.info.unit = '紅利金';
                         } else {
@@ -73,12 +71,7 @@
                     // 只顯示收藏卡片的篩選
                     if(props.collectionFilter) {
                         // 遍歷當前優惠方案的卡片陣列，用戶有收藏的卡片編號先記下來
-                        let collectCardNos = [];
-                        for(let cardNo of item?.cardNos) {
-                            if(userStore.collectionCards.includes(cardNo)) {
-                                collectCardNos.push(cardNo);
-                            }
-                        }
+                        let collectCardNos = item?.cardNos?.filter(cardNo => userStore.collectionCards.includes(cardNo));
                         // 卡片陣列有東西的話，把所有屬性都抄一份，放進排行陣列
                         if(collectCardNos.length > 0) {
                             const card = {};
@@ -107,7 +100,7 @@
             ranking.push(item);
         }
 
-        console.log(ranking.length);
+        console.log(props.rankingSrc.filter(item => !ranking.includes(item)));
         return ranking;
         
     });
