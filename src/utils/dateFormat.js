@@ -9,6 +9,17 @@ const dateToShow = date => {
     if(paramYear != new Date().getFullYear()) {
         res += paramYear + '/';
     }
+    res += `${ d.getMonth()+1 }/${ d.getDate() }`;
+    return res;
+};
+
+const dateTimeToShow = date => {
+    let res = '';
+    const d = new Date(date);
+    const paramYear = d.getFullYear();
+    if(paramYear != new Date().getFullYear()) {
+        res += paramYear + '/';
+    }
     res += `${ d.getMonth()+1 }/${ d.getDate() } ${ fillZero(d.getHours()) }:${ fillZero(d.getMinutes()) }`;
     return res;
 };
@@ -19,4 +30,4 @@ const dateToDateTime = date => {
     return `${ date.getFullYear() }-${ fillZero(month) }-${ fillZero(day) }`;
 };
 
-export { dateToShow, dateToDateTime };
+export { dateToShow, dateTimeToShow, dateToDateTime };

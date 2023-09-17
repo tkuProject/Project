@@ -5,7 +5,7 @@
     import { useUserStore } from '../store/userStore';
     import CardPreview from './CardPreview.vue';
     import Carousel from './Carousel.vue';
-    import { dateToShow } from '../utils/dateFormat';
+    import { dateToShow, dateTimeToShow } from '../utils/dateFormat';
 
     const props = defineProps(['rankingSrc', 'tab', 'platforms', 'totalCost', 'collectionFilter']);
     const cardStore = useCardStore();
@@ -14,7 +14,7 @@
     const tabMap = {
         '現金折扣': ['Cash_Discount', 'Cash_Discount_Percent'],
         '刷卡金回饋': ['Card_Reward', 'Card_Reward_Percent'],
-        '購物平台回饋': ['Shopping_Platform_Reward']
+        '購物平台回饋': ['Shopping_Platform_Reward', 'Shopping_Platform_Reward_Percent']
     };
 
     const conditions = {
@@ -28,7 +28,8 @@
 
         const ranking = props.rankingSrc.reduce((accumulator, item) => {
             for(let tabType of tabMap[props.tab]) {
-                if(item?.[tabType]) {
+                if(item?.[tabType] && parseInt(item?.[tabType]) > 0) {
+                    console.log();
                     item.info = {
                         sortKey: null,
                         date: '',
@@ -37,10 +38,10 @@
                         unit: '元'
                     };
                     if(item?.specific_duration_start) {
-                        item.info.date += dateToShow(item.specific_duration_start);
+                        item.info.date += dateTimeToShow(item.specific_duration_start);
                     }
                     if(item?.specific_duration_end) {
-                        item.info.date += '~' + dateToShow(item.specific_duration_end);
+                        item.info.date += '~' + dateTimeToShow(item.specific_duration_end);
                     }
                     if(tabType.includes('_Percent')) {
                         item.info.sortKey = props.totalCost * item?.[tabType];
