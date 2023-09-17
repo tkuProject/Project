@@ -171,6 +171,7 @@ router.get('/getPlatform', async(req,res) => {   // 顯示購物平台, query, �
 
 router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{優惠方案（object）, 卡片編號},　… ]
     const {platformNos, installment, totalCost, startDate, endDate} = req.query
+    console.log('installment: ',installment)
     try {
         // 組成字串、執行查詢
         let str = `SELECT DISTINCT * 
@@ -195,16 +196,17 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
 		`
         if(installment === false || installment === 'false') {                                     //分期與否
 			str+= `AND (cu.single_consumption_threshold <= "${totalCost}" 
-                AND cu.single_consumption_threshold IS NOT NULL)`
+                AND cu.single_consumption_threshold IS NOT NULL
+                AND cu.single_consumption_threshold>0)`
 		} else{
 			str+= `AND (cu.cumulative_installments_threshold IS NOT NULL 
                 OR
                 cu.single_installments_threshold <= "${totalCost}" 
-                AND cu.single_installments_threshold IS NOT NULL)`
+                AND cu.single_installments_threshold IS NOT NULL
+                AND cu.single_installments_threshold>0)`
 		}
         console.log(str);
-		let [results] = await promisePool.query(str)                        //查詢語句
-        
+		let [results] = await promisePool.query(str)
         for(let result of results){
             // 特定周幾
             const [thoseDays] = await promisePool.query(
@@ -214,25 +216,35 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
                 [result.uNo]
             )
             result.thoseDays = thoseDays.map(item =>item.the_day)
-            const conCardNos = await promisePool.query(
+            let conCardNos = await promisePool.query(
                 `SELECT Card_No
                 FROM Condition_Card_Nos
                 WHERE uNo = ${ result.uNo }`
             )
+            
             if(conCardNos[0].length>0) {
                 result.cardNos = conCardNos[0].map(item =>item.Card_No)
             } else {
-                const [rows] = await promisePool.query(
-                    `SELECT card_No
-                    FROM Credit_Card
-                    WHERE bank = ?`,
-                    [result.bank_name]
-                )
-                result.cardNos = rows.map(card => card.card_No);
+                let que = ''
+                if(result.dCard_issuer) {
+                    que = `SELECT card_No
+                        FROM Credit_Card
+                        WHERE card_issuer = '${result.dCard_issuer}'`
+                } else {
+                    que = `SELECT card_No
+                        FROM Credit_Card
+                        WHERE bank = '${result.bank_name}'
+                        `
+                        console.log('que: ', que);
+                }
+                let rows = await promisePool.query(que)
+                
+                result.cardNos = rows[0].map(card => card.card_No)
             }
         }
-        console.log(results)
-        res.send({status: 200, results});
+        results = results.filter(result => result.cardNos.length>0)
+        console.log("results", results)
+        res.send({status: 200, results})
     } catch (err) {
         console.error("Error executing query:", err)
         res.send({status:500, resData:{ error: "Internal Server Error"}})
