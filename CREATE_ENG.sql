@@ -52,13 +52,6 @@ FOREIGN KEY (dNo) REFERENCES discount_description(dNo)  on update cascade,
 FOREIGN KEY (sNo) REFERENCES Shopping_Platform(sNo) on update cascade
 );
 
-
-CREATE TABLE `include`(
-dNo int not null,
-PRIMARY KEY (dNo),
-FOREIGN KEY (dNo) REFERENCES discount_description(dNo) on update cascade
-);
-
 CREATE TABLE `member`(
 mAccount varchar(24) not null,
 mPassword varchar(64) not null,
@@ -101,15 +94,6 @@ Card_No int not null ,
 PRIMARY KEY(kNo, Card_No),
 FOREIGN KEY (Card_No) REFERENCES Credit_Card(Card_No) on update cascade,
 FOREIGN KEY (kNo) REFERENCES Keyword(kNo) on update cascade
-);
-
-CREATE TABLE collecting_notification(
-mAccount varchar(24) not null,
-nNo int not null,
-discount_information varchar(200) not null,
-PRIMARY KEY (mAccount, nNo),
-FOREIGN KEY (mAccount) REFERENCES member(mAccount),
-FOREIGN KEY (nNo) REFERENCES Notification(nNo)
 );
 
 CREATE TABLE Precautions(
