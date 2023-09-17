@@ -295,16 +295,20 @@ router.delete('/delCollection/:Card_No', async(req,res) => {   // 把卡片從�
     }
 })
 
-router.get('/searchCards', async(req,res) =>{
+router.get('/searchCards', async(req,res) =>{//銀行 卡 關鍵字 優惠資訊(前)
     const keyIn = req.query.keyIn
     try{
         const CardArr = await promisePool.query(
-            `SELECT Card_No 
-            FROM Keyword
-            NATURAL JOIN conform 
-            WHERE Keyword.kName LIKE ?`,
-            [`%${keyIn}%`]
+            `SELECT Keyword.Card_No, Credit_Card.Card_No
+            FROM conform
+            NATURAL JOIN Keyword
+            NATURAL JOIN Credit_Card
+            WHERE Keyword.kName LIKE :keyIn
+            OR Credit_Card.bank LIKE :keyIn
+            OR Credit_Card.Card_Name LIKE :keyIn`,
+            { keyIn: `%${keyIn}%` }
         )
+        console.log("123")
         console.log(CardArr)
         const cardNos = CardArr[0].map(item => item.Card_No)
         res.send({status: 200, cardNos})
