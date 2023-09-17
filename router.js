@@ -173,11 +173,12 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
     const {platformNos, installment, totalCost, startDate, endDate} = req.query
     try {
         // 組成字串、執行查詢
-        let str = `SELECT * 
+        let str = `SELECT DISTINCT * 
 		FROM Condition_of_Use AS cu
 		INNER JOIN discount_description AS dd
-            ON cu.dNo = dd.dNo
-        INNER JOIN Precautions
+        ON cu.dNo = dd.dNo
+        INNER JOIN Precautions AS pct
+        ON cu.dNo = pct.dNo
 		WHERE cu.sNo IN (${platformNos})
 		AND (
 			(cu.specific_duration_start <= "${startDate}"
@@ -299,14 +300,14 @@ router.get('/searchCards', async(req,res) =>{//銀行 卡 關鍵字 優惠資訊
     const keyIn = req.query.keyIn
     try{
         const CardArr = await promisePool.query(
-            `SELECT Keyword.Card_No, Credit_Card.Card_No
-            FROM conform
+            `SELECT DISTINCT conform.Card_No, Credit_Card.Card_No
+            FROM conform 
             NATURAL JOIN Keyword
             NATURAL JOIN Credit_Card
-            WHERE Keyword.kName LIKE :keyIn
-            OR Credit_Card.bank LIKE :keyIn
-            OR Credit_Card.Card_Name LIKE :keyIn`,
-            { keyIn: `%${keyIn}%` }
+            WHERE Keyword.kName LIKE ?
+            OR Credit_Card.bank LIKE ?
+            OR Credit_Card.Card_Name LIKE ?`,
+            [`%${keyIn}%`, `%${keyIn}%`, `%${keyIn}%`]
         )
         console.log("123")
         console.log(CardArr)
