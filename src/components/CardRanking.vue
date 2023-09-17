@@ -28,7 +28,7 @@
 
         const ranking = props.rankingSrc.reduce((accumulator, item) => {
             for(let tabType of tabMap[props.tab]) {
-                if(item?.[tabType] && parseInt(item?.[tabType]) > 0) {
+                if(item?.[tabType] && parseFloat(item?.[tabType]) > 0) {
                     item.info = {
                         sortKey: null,
                         date: '',
@@ -100,7 +100,6 @@
             ranking.push(item);
         }
 
-        console.log(props.rankingSrc.filter(item => !ranking.includes(item)));
         return ranking;
         
     });
