@@ -152,7 +152,7 @@
                             </template>
                         </template>
                     </div>
-                    <span class="imPrecautions">{{ item.important_precautions_content }}</span>
+                    <span class="imPrecautions">{{ item.important_precautions_content }}</span><br>
                     {{ item.Precautions_content }}
                 </div>
             </td>

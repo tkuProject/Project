@@ -202,11 +202,10 @@
         li {
             margin: 15px;
             width: 20%;
+            height: 160px;
             .cardHeader {
                 display: flex;
                 justify-content: flex-end;
-                padding: 10px;
-                background-color: rgba(129, 217, 236, .3);
                 button {
                     width: 20px;
                     height: 20px;

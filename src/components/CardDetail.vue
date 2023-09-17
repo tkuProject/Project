@@ -62,7 +62,7 @@
             .detailCard {
                 display: block;
                 margin: 0 auto;
-                height: 160px;
+                height: 100px;
             }
             .cardName {
                 text-align: center;

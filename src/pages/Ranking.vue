@@ -48,7 +48,9 @@
     <ul class="rankingGraph">
         <li v-for="(color, index) in barColor">
             <img v-if="index==0" src="../assets/images/小王冠.png" alt="" class="crown">
-            <CardPreview :card="rankList[index]?.card"></CardPreview>
+            <div class="cardBox">
+                <CardPreview :card="rankList[index]?.card"></CardPreview>
+            </div>
             <div class="chartBar" :style="{ height: rankList[index]?.weight_score / (maxScore/200) + 'px', backgroundColor: color }"></div>
         </li>
     </ul>
@@ -93,13 +95,16 @@
             align-items: center;
             position: relative;
             width: 20%;
+            .cardBox {
+                height: 160px;
+            }
             .chartBar {
                 width: 60px;
                 border-radius: 12px 12px 0 0;
             }
             .crown {
                 position: absolute;
-                top: -24px;
+                top: -15px;
                 left: -16px;
                 width: 40px;
                 height: 30px;
