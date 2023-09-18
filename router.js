@@ -309,31 +309,38 @@ router.delete('/delCollection/:Card_No', async(req,res) => {   // 把卡片從�
 })
 
 router.get('/searchCards', async(req,res) =>{//銀行 卡 關鍵字 優惠資訊(前)
-
     const keyIn = req.query.keyIn
-    /* SELECT DISTINCT card_no
+    const likeParam = `%${keyIn.toUpperCase()}%`
+    try{
+        const [result1] = await promisePool.query(
+            `SELECT DISTINCT card_no
             FROM Credit_Card
-            WHERE Card_Name LIKE '%${keyIn}%';
-
-SELECT DISTINCT conform.Card_No
+            WHERE upper(Card_Name) LIKE ?`,
+            [likeParam]
+        )
+        const [result2] = await promisePool.query(
+            `SELECT DISTINCT conform.Card_No
             FROM conform
             NATURAL JOIN keyword
-            WHERE keyword.kName LIKE '%${keyIn}%';
-SELECT DISTINCT Card_No     
+            WHERE upper(keyword.kName) LIKE ?`,
+            [likeParam]
+        )
+        const [result3] = await promisePool.query(
+            `SELECT DISTINCT Card_No     
             FROM Credit_Card
-            WHERE bank LIKE '%${keyIn}%';*/
-    let str = `SELECT DISTINCT conform.Card_No, Credit_Card.Card_No
-    FROM conform 
-    NATURAL JOIN Keyword
-    NATURAL JOIN Credit_Card
-    WHERE Keyword.kName LIKE '%${keyIn}%'
-    OR Credit_Card.bank LIKE '%${keyIn}%'
-    OR Credit_Card.Card_Name LIKE '%${keyIn}%'`
-    try{
-        const CardArr = await promisePool.query(str)
-        console.log('str: ', str)
-        console.log('CardArr: ', CardArr)
-        const cardNos = CardArr[0].map(item => item.Card_No)
+            WHERE upper(bank) LIKE ?`,
+            [likeParam]
+        )
+        const [result4] = await promisePool.query(
+            `SELECT DISTINCT Card_No     
+            FROM Credit_Card
+            WHERE upper(card_issuer) LIKE ?`,
+            [likeParam]
+        )
+        const cardNos = [...result1,...result2,...result3,...result4].map(item => Object.values(item)[0])
+
+        console.log(result1);
+        console.log(cardNos);
         res.send({status: 200, cardNos})
     } catch (err) {
         console.error("Error executing query:", err)
