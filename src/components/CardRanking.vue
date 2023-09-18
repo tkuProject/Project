@@ -1,6 +1,6 @@
 <script setup>
 
-    import { computed } from 'vue';
+    import { computed, watch, ref } from 'vue';
     import { useCardStore } from '../store/cardStore';
     import { useUserStore } from '../store/userStore';
     import CardPreview from './CardPreview.vue';
@@ -104,6 +104,11 @@
         
     });
 
+    const reloadCards = ref(true);
+    watch(() => [props.collectionFilter, props.tab], () => {
+        reloadCards.value = !reloadCards.value;
+    });
+
 </script>
 
 <template>
@@ -119,7 +124,7 @@
         <tr v-for="(item, index) in currentRanking">
             <td class="tdRanking">{{ index + 1 }}</td>
             <td class="tdCard">
-                <Carousel :re-load-list="props.collectionFilter">
+                <Carousel :re-load-list="reloadCards">
                     <div v-for="cardNo in item.cardNos" class="cardBox">
                         <CardPreview :card="cardStore.findCard(cardNo)"></CardPreview>
                     </div>
