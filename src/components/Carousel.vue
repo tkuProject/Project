@@ -20,6 +20,9 @@
         let maxHeight = null;
 
         listItems = Array.from(listEl.value.children);
+        if(listItems.length == 1) {
+            rightArrowEl.value.classList.add('disabled');
+        }
         listItemMargin = (windowEl.value.parentNode.clientWidth - listItems[0].offsetWidth)/2;
 
         await new Promise(resolve => setTimeout(resolve, 200));
