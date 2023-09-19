@@ -20,6 +20,9 @@
         let maxHeight = null;
 
         listItems = Array.from(listEl.value.children);
+
+        checkArrow();
+
         if(listItems.length == 1) {
             rightArrowEl.value.classList.add('disabled');
         }
@@ -55,7 +58,7 @@
         }
     };
 
-    watch(currentIndex, () => {
+    const checkArrow = () => {
         if(currentIndex.value == 0) {
             leftArrowEl.value.classList.add('disabled');
         } else if(currentIndex.value < 0) {
@@ -63,13 +66,17 @@
         } else if(leftArrowEl.value.classList.contains('disabled')) {
             leftArrowEl.value.classList.remove('disabled');
         }
-        if(currentIndex.value == listItems.length - 1 || listItems.length == 0) {
+        if(currentIndex.value == listItems.length - 1 || listItems.length <= 1) {
             rightArrowEl.value.classList.add('disabled');
         } else if(currentIndex.value > listItems.length - 1) {
             currentIndex.value = listItems.length - 1;
         } else if(rightArrowEl.value.classList.contains('disabled')) {
             rightArrowEl.value.classList.remove('disabled');
         }
+    };
+
+    watch(currentIndex, () => {
+        checkArrow();
     });
 
     watch(() => props.reLoadList, async () => {
