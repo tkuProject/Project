@@ -111,6 +111,7 @@
         }
         .disabled {
             opacity: .3;
+            cursor: unset;
             &:hover {
                 background-image: url('../assets/images/toTop.svg');
             }
