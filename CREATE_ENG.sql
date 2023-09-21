@@ -24,11 +24,11 @@ PRIMARY KEY(Card_No)
 CREATE TABLE discount_description(
 dNo int not null AUTO_INCREMENT,
 Cash_Discount int null,
-Cash_Discount_Percent DECIMAL(4,3) null,
+Cash_Discount_Percent DECIMAL(5,4) null,
 Card_Reward int null,
-Card_Reward_Percent DECIMAL(3,2) null,
+Card_Reward_Percent DECIMAL(5,4) null,
 Shopping_Platform_Reward int null,
-Shopping_Platform_Reward_Percent DECIMAL(3,2) null,
+Shopping_Platform_Reward_Percent DECIMAL(5,4) null,
 Reward_upper_limit int  null, 
 dNote varchar(120) null,
 PRIMARY KEY (dNo)
