@@ -199,7 +199,8 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
                 AND cu.single_consumption_threshold IS NOT NULL
                 AND cu.single_consumption_threshold>0)`
 		} else{
-			str+= `AND (cu.cumulative_installments_threshold IS NOT NULL 
+			str+= `AND (cu.cumulative_installments_threshold IS NOT NULL
+                AND  cu.cumulative_installments_threshold !=0
                 OR
                 cu.single_installments_threshold <= "${totalCost}" 
                 AND cu.single_installments_threshold IS NOT NULL
@@ -235,7 +236,6 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
                         FROM Credit_Card
                         WHERE bank = '${result.bank_name}'
                         `
-                        console.log('que: ', que);
                 }
                 let rows = await promisePool.query(que)
                 
@@ -243,7 +243,7 @@ router.get('/compFilter', async(req,res) => {   // 比較, query, ＊格式：[{
             }
         }
         results = results.filter(result => result.cardNos.length>0)
-        console.log("results", results)
+        //console.log("results", results)
         res.send({status: 200, results})
     } catch (err) {
         console.error("Error executing query:", err)
