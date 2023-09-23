@@ -76,7 +76,7 @@
             margin-left: 20px;
             padding-top: 20px;
             width: 400px;
-            height: 250px;
+            height: 500px;
             color: black;
             background-color: rgba(255, 247, 206, .5);
             border-radius: 12px;

@@ -43,7 +43,6 @@
             background-color: rgba(0, 0, 0, .5);
         }
         .windowBox {
-            max-height: 500px;
             position: absolute;
             padding-bottom: 10px;
             border: 1px solid #009DBF;
