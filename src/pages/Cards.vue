@@ -5,6 +5,7 @@
     import { useUserStore } from '../store/userStore';
     import sendReq from '../utils/sendReq';
     import CardPreview from '../components/CardPreview.vue';
+    import CardButton from '../components/CardButton.vue';
 
     const cardStore = useCardStore();
     const userStore = useUserStore();
@@ -24,37 +25,6 @@
             }
         });
     });
-
-    const delFromCollection = async (cardNo) => {
-        const { status } = await sendReq('delCollection',
-        {
-            headers: { account: userStore.account },
-            params: [cardNo]
-        },
-        'delete');
-        if(status == 200) {
-            alert('刪除成功！');
-        } else {
-            alert('刪除失敗');
-        }
-        // 刷新userStore的collectionCards
-        await userStore.getCollectionCards();
-    };
-    const addToCollection = async (cardNo) => {
-        const { status } = await sendReq('appendCollection',
-        {
-            headers: { account: userStore.account },
-            body: { Card_No: cardNo }
-        },
-        'post');
-        if(status == 200) {
-            alert('添加成功！');
-        } else {
-            alert('添加失敗');
-        }
-        // 刷新userStore的collectionCards
-        await userStore.getCollectionCards();
-    };
 
     const searchingMode = ref(false);
     const keyIn = ref('');
@@ -104,9 +74,7 @@
                 <li v-if="searchingMode ? keyNos.includes(card?.Card_No) : true">
                     <CardPreview :card="card">
                         <template #header v-if="userStore.account">
-                            <div class="cardHeader">
-                                <button @click="delFromCollection(card.Card_No)" class="addAndDel delFromCollection" title="從您的收藏中刪除">×</button>
-                            </div>
+                            <CardButton :card-no="card.Card_No"></CardButton>
                         </template>
                     </CardPreview>
                 </li>
@@ -124,9 +92,7 @@
             <li v-if="searchingMode ? keyNos.includes(card?.Card_No) : true">
                 <CardPreview :card="card">
                     <template #header v-if="userStore.account">
-                        <div class="cardHeader">
-                            <button @click="addToCollection(card.Card_No)" class="addAndDel addToCollection" title="加入您的收藏">+</button>
-                        </div>
+                        <CardButton :card-no="card.Card_No"></CardButton>
                     </template>
                 </CardPreview>
             </li>
@@ -203,31 +169,6 @@
             margin: 15px;
             width: 20%;
             height: 160px;
-            .cardHeader {
-                display: flex;
-                justify-content: flex-end;
-                button {
-                    width: 20px;
-                    height: 20px;
-                }
-                .addAndDel {
-                    color: gray;
-                    border: 1.5px solid gray;
-                    border-radius: 6px;
-                }
-                .delFromCollection {
-                    &:hover {
-                        color: white;
-                        background-color: red;
-                    }
-                }
-                .addToCollection {
-                    &:hover {
-                        color: white;
-                        background-color: #009DBF;
-                    }
-                }
-            }
         }
     }
 

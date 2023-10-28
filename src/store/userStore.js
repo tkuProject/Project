@@ -18,6 +18,10 @@ export const useUserStore = defineStore('user', {
                     return json.collectionCards;
                 }
             });
+        },
+
+        inCollection(cardNo) {
+            return this.collectionCards.some(item => item == cardNo);
         }
     }
 });

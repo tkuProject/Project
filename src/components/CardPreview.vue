@@ -1,6 +1,6 @@
 <script setup>
 
-    import { onMounted, ref } from 'vue';    
+    import { ref } from 'vue';    
     import CardDetail from './CardDetail.vue';
 
     const props = defineProps(['card', 'namePrefix', 'onlyName']);

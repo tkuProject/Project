@@ -1,8 +1,12 @@
 <script setup>
 
+    import CardButton from './CardButton.vue';
     import PopUpBox from './PopUpBox.vue';
+    import { useUserStore } from '../store/userStore';
 
     const props = defineProps(['card', 'show']);
+
+    const userStore = useUserStore();
 
     const cardInfo = {
         '銀行': 'bank',
@@ -29,6 +33,9 @@
                 <div class="cardBox">
                     <img :src="props.card.Img_Site" alt="" class="detailCard">
                     <div class="cardName">{{ props.card.Card_Name }}</div>
+                    <template v-if="userStore.account">
+                        <CardButton :card-no="props.card.Card_No" text-mode="true"></CardButton>
+                    </template>
                 </div>
                 
                 <ul class="infoUl scrollBox">
