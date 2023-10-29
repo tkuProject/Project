@@ -64,6 +64,14 @@
     .wrapper {
         display: flex;
         padding: 20px;
+        padding-bottom: 10px;
+        max-width: 80vw;
+        max-height: 80vh;
+        @media screen and (max-width: 767px) {
+            flex-direction: column;
+            align-items: center;
+            max-height: 60vh;
+        }
         .cardBox {
             width: 200px;
             .detailCard {
@@ -82,11 +90,16 @@
             flex-direction: column;
             margin-left: 20px;
             padding-top: 20px;
-            width: 400px;
-            height: 500px;
+            width: 30vw;
+            height: 70vh;
             color: black;
             background-color: rgba(255, 247, 206, .5);
             border-radius: 12px;
+            @media screen and (max-width: 767px) {
+                margin: 0;
+                margin-top: 2vh;
+                width: 60vw;
+            }
             li {
                 margin: 0 20px;
                 .infoTitle {

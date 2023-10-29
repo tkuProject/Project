@@ -226,14 +226,18 @@
         box-sizing: border-box;
         padding: 0 30px;
         width: 100vw;
-        height: 80px;
         background-color: #81D9EC;
+        @media screen and (max-width: 767px) {
+            justify-content: space-around;
+            padding: 0;
+        }
         
         .titleWrapper {
             display: flex;
             flex-direction: column;
             justify-content: space-evenly;
-            padding-left: 20px;
+            padding-bottom: 0.6vh;
+            width: 30vw;
             height: 100%;
             color: #009DBF;
             cursor: pointer;
@@ -241,11 +245,15 @@
                 text-shadow: 0 0 6px white;
             }
             .logo {
-                width: 160px;
-                height: 60%;
+                max-height: 60%;
                 color: #009DBF;
-                font-size: 48px;
+                font-size: 40px;
                 text-decoration: none;
+            }
+            span {
+                @media screen and (max-width: 767px) {
+                    padding: 0 1vw;
+                }
             }
         }
 
@@ -253,8 +261,10 @@
             display: flex;
             align-items: center;
             justify-content: space-evenly;
-            margin-right: 20px;
-            width: 260px;
+            width: 20vw;
+            @media screen and (max-width: 767px) {
+                width: 60vw;
+            }
             li {
                 display: flex;
                 flex-direction: column;
@@ -308,7 +318,7 @@
                 flex-direction: column;
                 position: absolute;
                 top: 70px;
-                right: -30px;
+                right: -1vw;
                 padding: 4px 0;
                 width: 140px;
                 border: 1px solid gray;

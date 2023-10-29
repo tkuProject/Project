@@ -153,14 +153,14 @@
     </ul>
 
     <div class="tagWrapper">
-        <Tags :types="calculateResultTags" v-model="selectedTag"></Tags>
-
         <div class="onlyMyCard" v-if="userStore.account">
             <label>
                 <input v-model="onlyMyCard" type="checkbox">
                 只顯示我的收藏
             </label>
         </div>
+        
+        <Tags :types="calculateResultTags" v-model="selectedTag"></Tags>
     </div>
     
     <CardRanking :ranking-src="rankingSrc" :tab="selectedTag" :platforms="platforms" :total-cost="totalCost" :collection-filter="onlyMyCard"></CardRanking>
@@ -188,9 +188,7 @@
             flex-wrap: wrap;
             justify-content: space-around;
             align-items: center;
-            margin: 40px auto;
-            margin-bottom: 50px;
-            height: 64px;
+            margin: 6vh auto;
             li {
                 display: flex;
                 flex-direction: column;
@@ -221,7 +219,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-bottom: 50px;
+        margin-bottom: 10vh;
 
         li {
             display: flex;
@@ -269,13 +267,17 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        position: relative;
         .onlyMyCard {
+            position: absolute;
+            right: 0;
             text-align: center;
+            @media screen and (max-width: 767px) {
+                top: -4vh;
+            }
             label {
                 display: block;
                 margin: auto;
-                height: 40px;
-                line-height: 40px;
             }
         }
     }

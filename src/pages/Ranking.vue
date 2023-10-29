@@ -85,10 +85,13 @@
         flex-direction: row;
         align-items: flex-end;
         justify-content: space-evenly;
-        padding-top: 40px;
+        padding-top: 6vh;
         width: 100%;
         background-color: white;
         box-shadow: 0 8px 8px rgba(0, 0, 0, .2);
+        @media screen and (max-width: 767px) {
+            padding-top: 4vh;
+        }
         li {
             display: flex;
             flex-direction: column;
@@ -96,6 +99,7 @@
             position: relative;
             width: 20%;
             .cardBox {
+                max-width: 100%;
                 height: 160px;
             }
             .chartBar {
@@ -109,7 +113,12 @@
                 width: 40px;
                 height: 30px;
                 transform: rotate(-25deg);
-                filter: drop-shadow(0 8px 4px rgba(0, 0, 0, .5))
+                filter: drop-shadow(0 8px 4px rgba(0, 0, 0, .5));
+                @media screen and (max-width: 767px) {
+                    top: -10px;
+                    left: 10px;
+                    transform: unset;
+                }
             }
         }
         

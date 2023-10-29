@@ -31,6 +31,9 @@
             border-bottom: 0;
             border-radius: 20px 20px 0 0;
             background-color: #81D9EC;
+            @media screen and (max-width: 767px) {
+                width: 26vw;
+            }
         }
 
         .tagSelected {
@@ -38,6 +41,9 @@
             height: 60px;
             color: gray;
             background-color: white;
+            @media screen and (max-width: 767px) {
+                width: 28vw;
+            }
         }
 
     }

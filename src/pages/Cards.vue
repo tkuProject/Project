@@ -109,9 +109,9 @@
     .search {
         position: relative;
         overflow: hidden;
-        margin: 40px auto;
+        margin: 6vh auto;
         margin-top: 0;
-        width: 400px;
+        width: 60vw;
         height: 40px;
         background-color: white;
         border: none;
@@ -123,6 +123,9 @@
             height: 100%;
             border: none;
             outline: none;
+            @media screen and (max-width: 767px) {
+                width: 84%;
+            }
         }
         button {
             position: absolute;
@@ -132,6 +135,9 @@
             height: 100%;
             background: url('../assets/images/放大鏡.svg') no-repeat center;
             background-size: 40%;
+            @media screen and (max-width: 767px) {
+                width: 16%;
+            }
         }
     }
     .goBack {
@@ -168,7 +174,10 @@
         li {
             margin: 15px;
             width: 20%;
-            height: 160px;
+            height: 30vh;
+            @media screen and (max-width: 767px) {
+                height: 16vh;
+            }
         }
     }
 
