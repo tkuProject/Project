@@ -200,15 +200,25 @@
                     border-radius: 12px;
                     cursor: pointer;
                     transition: .2s;
-                }
-                img:hover {
-                    width: 120px;
-                    height: 60px;
+                    @media screen and (min-width: 768px) {
+                        &:hover {
+                            width: 120px;
+                            height: 60px;
+                        }
+                    }
+                    @media screen and (max-width: 767px) {
+                        width: 36vw;
+                        height: 10vh;
+                    }
                 }
                 .platformSelected {
                     width: 120px;
                     height: 60px;
                     border: 2px solid gray;
+                    @media screen and (max-width: 767px) {
+                        width: 38vw;
+                        height: 12vh;
+                    }
                 }
             }
         }

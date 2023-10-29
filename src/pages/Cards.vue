@@ -176,7 +176,8 @@
             width: 20%;
             height: 30vh;
             @media screen and (max-width: 767px) {
-                height: 16vh;
+                width: 100%;
+                height: 20vh;
             }
         }
     }

@@ -135,6 +135,9 @@
         background-color: rgba(255, 255, 255, .5);
         border: 1px solid gray;
         border-radius: 12px;
+        @media screen and (max-width: 767px) {
+            width: 100%;
+        }
         ul {
             text-align: left;
         }
