@@ -14,8 +14,8 @@
   .toTop {
     display: block;
     position: fixed;
-    right: 100px;
-    bottom: 80px;
+    right: 3vw;
+    bottom: 14vh;
     width: 42px;
     height: 42px;
     background: white url('../assets/images/toTop.svg') no-repeat center 9px;

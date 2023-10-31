@@ -251,6 +251,7 @@
                 text-decoration: none;
             }
             span {
+                word-wrap: break-word;
                 @media screen and (max-width: 767px) {
                     padding: 0 1vw;
                 }

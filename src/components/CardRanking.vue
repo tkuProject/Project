@@ -198,6 +198,9 @@
         .tdDesc {
             padding: 20px;
             width: 26%;
+            @media screen and (max-width: 767px) {
+                padding: 2vw;
+            }
             .scrollBox {
                 max-width: 240px;
                 height: 180px;
